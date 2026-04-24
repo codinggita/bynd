@@ -2,6 +2,8 @@
 
 ![BYND Logo](https://via.placeholder.com/200x50/0A1929/00E5FF?text=BYND)
 
+**Design Assets**: [Figma Design File](https://www.figma.com/design/Nw5DxsHzT2Sw9KxEZtU3qe/BYND?node-id=1-3205&t=qsRvCo8TgcB1sM5k-1)
+
 **BYND** is a no-code bidirectional sync engine that connects Excel, CRM, and Invoicing systems for global SMBs. Stop manually copying data between spreadsheets, HubSpot, QuickBooks, and Xero — let BYND handle the sync while you focus on growing your business.
 
 ---
