@@ -9,6 +9,7 @@ import {
   EyeSlash, 
   GoogleLogo 
 } from '@phosphor-icons/react';
+import Logo from '../components/Logo';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
@@ -35,9 +36,8 @@ const Auth = () => {
       {/* Left Panel - Brand & Testimonial */}
       <div className="hidden lg:flex flex-col justify-between w-[450px] bg-brand-deep p-12 text-white relative overflow-hidden">
         <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-2 mb-24">
-            <ArrowsLeftRight size={32} className="text-brand-accent" weight="fill" />
-            <span className="font-display text-2xl tracking-tight">BYND</span>
+          <Link to="/" className="mb-24 inline-block">
+            <Logo light={true} />
           </Link>
 
           <div className="space-y-8">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowsLeftRight, GithubLogo, TwitterLogo, LinkedinLogo } from '@phosphor-icons/react';
+import { GithubLogo, TwitterLogo, LinkedinLogo } from '@phosphor-icons/react';
+import Logo from './Logo';
 
 const Footer = () => {
   return (
@@ -8,9 +9,8 @@ const Footer = () => {
       <div className="max-w-[1280px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-6">
-              <ArrowsLeftRight size={32} className="text-brand-accent" weight="fill" />
-              <span className="font-display text-2xl text-white tracking-tight">BYND</span>
+            <Link to="/" className="mb-6 inline-block">
+              <Logo light={true} />
             </Link>
             <p className="text-text-secondary text-sm leading-relaxed mb-6">
               The next-generation bidirectional sync engine for your business data.
