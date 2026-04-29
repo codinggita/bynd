@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const Logo = ({ className = '', light = false }) => {
-  const textColor = light ? 'text-white' : 'text-color-brand-deep';
+  const textColor = light ? 'text-white' : 'text-brand-deep';
   
   return (
     <div className={`flex items-center gap-2 group cursor-pointer ${className}`}>
@@ -17,11 +17,11 @@ const Logo = ({ className = '', light = false }) => {
             stroke="currentColor" 
             strokeWidth="3" 
             strokeLinecap="round" 
-            className={light ? 'text-white/30' : 'text-color-brand-deep/30'} 
+            className={light ? 'text-white/30' : 'text-brand-deep/30'} 
           />
 
           {/* Central Origin Node (The Silo Core) */}
-          <circle cx="16" cy="16" r="2" fill="currentColor" className={light ? 'text-white' : 'text-color-brand-deep'} />
+          <circle cx="16" cy="16" r="2" fill="currentColor" className={light ? 'text-white' : 'text-brand-deep'} />
           
           {/* Trailing Warp Effect (Faded streak behind the main arrow) */}
           <motion.g

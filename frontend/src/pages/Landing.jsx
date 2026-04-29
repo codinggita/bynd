@@ -826,7 +826,9 @@ const Landing = () => {
               <h2 className="text-6xl md:text-8xl font-display font-black text-white mb-12 tracking-tighter leading-none">Ready for Absolute <span className="text-[#00E5FF]">Parity?</span></h2>
               <p className="text-2xl text-slate-400 font-medium mb-16 leading-relaxed">Join 3,200+ organizations building on the SENTIENT data mesh.</p>
               <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-                 <button className="px-12 py-6 bg-[#00E5FF] text-[#0A1929] rounded-[32px] font-black uppercase text-sm tracking-[0.3em] shadow-[0_30px_60px_#00E5FF40] hover:scale-105 transition-transform">
+                 <button 
+                    onClick={() => window.location.href = '/auth?mode=signup'}
+                    className="px-12 py-6 bg-[#00E5FF] text-[#0A1929] rounded-[32px] font-black uppercase text-sm tracking-[0.3em] shadow-[0_30px_60px_#00E5FF40] hover:scale-105 transition-transform">
                     Initialize Deployment
                  </button>
                  <button className="px-12 py-6 bg-white/5 border border-white/20 text-white rounded-[32px] font-black uppercase text-sm tracking-[0.3em] hover:bg-white/10 transition-all">
