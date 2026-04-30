@@ -15,6 +15,7 @@ import Hero3DNodes from '../components/Hero3DNodes';
 import ComparisonSection from '../components/ComparisonSection';
 import ImageComparison from '../components/ImageComparison';
 import Lenis from 'lenis';
+import SEO from '../components/SEO';
 
 const Landing = () => {
   const [annualBilling, setAnnualBilling] = useState(true);
@@ -55,6 +56,10 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-color-bg-page selection:bg-color-brand-accent/30 font-sans text-color-text-primary">
+      <SEO 
+        title="Sovereign Data Sync Engine" 
+        description="BYND is the industry-leading engine for real-time, high-parity data synchronization across enterprise nodes." 
+      />
       <Navbar />
 
       <main className="relative z-10 w-full overflow-hidden">
