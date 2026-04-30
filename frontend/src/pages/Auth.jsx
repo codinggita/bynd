@@ -1,293 +1,309 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { 
-  ArrowsLeftRight, 
-  Envelope, 
-  Lock, 
-  Eye, 
-  EyeSlash, 
-  GoogleLogo 
-} from '@phosphor-icons/react';
-import Logo from '../components/Logo';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import { 
+  User, 
+  Mail, 
+  Lock, 
+  Eye, 
+  EyeOff, 
+  ArrowLeft, 
+  Users, 
+  Globe,
+  ArrowRight,
+  ShieldCheck
+} from 'lucide-react';
 
+// Brand Color
+const ACCENT_COLOR = '#12E7FF';
+
+// SaaS Level Validation Schema
 const loginSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string().min(8, 'Too short').required('Required'),
+  email: Yup.string()
+    .email('Please enter a valid corporate email address')
+    .required('Authorization email is required'),
+  password: Yup.string()
+    .min(8, 'Security Requirement: Minimum 8 characters')
+    .required('Access key/password is required'),
 });
 
 const signupSchema = Yup.object().shape({
-  fullName: Yup.string().required('Required'),
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string().min(8, 'Must be at least 8 characters').required('Required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords must match')
-    .required('Required'),
+  fullName: Yup.string()
+    .min(2, 'Name must contain at least 2 characters')
+    .matches(/^[a-zA-Z\s]+$/, 'Name should only contain alphabets')
+    .required('Official identity name is required'),
+  email: Yup.string()
+    .email('A valid professional email is mandatory')
+    .required('Sync node email is required'),
+  password: Yup.string()
+    .min(8, 'High Security: Minimum 8 characters required')
+    .matches(/[a-z]/, 'Must include at least one lowercase character')
+    .matches(/[A-Z]/, 'Must include at least one uppercase character')
+    .matches(/[0-9]/, 'Must include at least one numeric digit')
+    .matches(/[@$!%*?&]/, 'Must include at least one special character (@$!%*?&)')
+    .required('Secure access key is mandatory'),
+  referralCode: Yup.string()
+    .min(4, 'Invalid format: Code too short')
+    .required('Authorized BYND Partner Code is mandatory for onboarding'),
 });
 
-const Auth = () => {
-  const [activeTab, setActiveTab] = useState('signin');
-  const [showPassword, setShowPassword] = useState(false);
+const InputField = ({ name, type, placeholder, icon: Icon, errors, touched, showPassword, setShowPassword }) => {
+  const isPasswordField = name === 'password';
+  const hasError = errors[name] && touched[name];
 
   return (
-    <div className="min-h-screen flex bg-white">
-      {/* Left Panel - Brand & Testimonial */}
-      <div className="hidden lg:flex flex-col justify-between w-[450px] bg-brand-deep p-12 text-white relative overflow-hidden">
-        <div className="relative z-10">
-          <Link to="/" className="mb-24 inline-block">
-            <Logo light={true} />
-          </Link>
-
-          <div className="space-y-8">
-            <div className="w-12 h-1 bg-brand-accent rounded-full" />
-            <blockquote className="text-3xl font-display leading-tight italic">
-              "The synchronous accuracy and structural integrity it brings to our data pipelines is nothing short of revolutionary."
-            </blockquote>
-            
-            <div className="flex items-center gap-4 pt-4">
-              <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden bg-slate-800">
-                <img src="https://i.pravatar.cc/100?img=12" alt="Samir Javdani" />
-              </div>
-              <div>
-                <p className="font-bold text-lg">Samir Javdani</p>
-                <p className="text-text-secondary text-sm">VP of Data Infrastructure</p>
-              </div>
-            </div>
-          </div>
+    <div className="space-y-1">
+      <div className="relative group">
+        <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-10 
+          ${hasError ? 'text-red-400' : 'text-gray-500 group-focus-within:text-[#12E7FF] group-focus-within:scale-110'}`}>
+          <Icon size={18} />
         </div>
-
-        <div className="relative z-10 pt-12">
-          <p className="text-xs text-text-secondary">
-            © 2024 BYND Technologies Inc. All rights reserved.
-          </p>
-        </div>
-
-        {/* Decorative background circles */}
-        <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-brand-accent/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-5%] left-[-5%] w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl" />
-      </div>
-
-      {/* Right Panel - Auth Forms */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 bg-bg-page lg:bg-white">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-[440px] bg-white lg:bg-transparent p-8 lg:p-0 rounded-2xl shadow-2xl lg:shadow-none border border-border lg:border-none"
-        >
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-display font-bold text-brand-deep mb-2">
-              {activeTab === 'signin' ? 'Welcome Back' : 'Create Account'}
-            </h1>
-            <p className="text-text-secondary">
-              {activeTab === 'signin' 
-                ? 'Log in to manage your data syncs.' 
-                : 'Start your 14-day free trial today.'}
-            </p>
-          </div>
-
-          {/* Custom Tabs */}
-          <div className="flex p-1 bg-slate-100 rounded-lg mb-8">
-            <button
-              onClick={() => setActiveTab('signup')}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
-                activeTab === 'signup' 
-                  ? 'bg-white text-brand-deep shadow-sm' 
-                  : 'text-text-secondary hover:text-brand-deep'
-              }`}
-            >
-              Sign Up
-            </button>
-            <button
-              onClick={() => setActiveTab('signin')}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
-                activeTab === 'signin' 
-                  ? 'bg-brand-deep text-white shadow-sm' 
-                  : 'text-text-secondary hover:text-brand-deep'
-              }`}
-            >
-              Sign In
-            </button>
-          </div>
-
-          <button className="w-full py-3 px-4 bg-white border border-border rounded-lg flex items-center justify-center gap-3 text-sm font-medium text-brand-deep hover:bg-slate-50 transition-colors mb-6 shadow-sm">
-            <GoogleLogo size={20} weight="bold" className="text-[#4285F4]" />
-            Continue with Google
+        <Field
+          name={name}
+          type={isPasswordField ? (showPassword ? 'text' : 'password') : type}
+          placeholder={placeholder}
+          className={`w-full bg-white/[0.03] backdrop-blur-md text-white pl-11 pr-11 py-3 rounded-xl border transition-all duration-500 outline-none placeholder:text-gray-600 text-sm
+            ${hasError 
+              ? 'border-red-500/40 focus:border-red-500 bg-red-500/5 shadow-[0_0_15px_rgba(239,68,68,0.1)]' 
+              : 'border-white/10 focus:border-[#12E7FF] focus:bg-white/[0.06] focus:shadow-[0_0_20px_rgba(18,231,255,0.15)]'
+            }`}
+        />
+        {isPasswordField && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#12E7FF] transition-colors z-10"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
-
-          <div className="relative mb-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white lg:bg-white px-4 text-text-secondary font-medium">Or</span>
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {activeTab === 'signin' ? (
-              <motion.div
-                key="signin"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Formik
-                  initialValues={{ email: '', password: '' }}
-                  validationSchema={loginSchema}
-                  onSubmit={(values) => console.log(values)}
-                >
-                  {({ errors, touched }) => (
-                    <Form className="space-y-5">
-                      <div>
-                        <label className="block text-sm font-semibold text-brand-deep mb-2">Work Email</label>
-                        <div className="relative">
-                          <Envelope size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
-                          <Field
-                            name="email"
-                            type="email"
-                            placeholder="name@company.com"
-                            className={`w-full pl-10 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-brand-accent/50 transition-all ${
-                              errors.email && touched.email ? 'border-error bg-error/5' : 'border-border'
-                            }`}
-                          />
-                        </div>
-                        {errors.email && touched.email && <p className="text-xs text-error mt-1">{errors.email}</p>}
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="block text-sm font-semibold text-brand-deep">Password</label>
-                          <Link to="/forgot-password" size="sm" className="text-xs font-bold text-brand-accent hover:underline">
-                            Forgot password?
-                          </Link>
-                        </div>
-                        <div className="relative">
-                          <Lock size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
-                          <Field
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="••••••••"
-                            className={`w-full pl-10 pr-10 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-brand-accent/50 transition-all ${
-                              errors.password && touched.password ? 'border-error bg-error/5' : 'border-border'
-                            }`}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-brand-deep"
-                          >
-                            {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
-                          </button>
-                        </div>
-                        {errors.password && touched.password && <p className="text-xs text-error mt-1">{errors.password}</p>}
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="w-full py-3 bg-brand-deep text-white font-bold rounded-lg hover:bg-opacity-90 transition-all shadow-md mt-4"
-                      >
-                        Log In
-                      </button>
-                    </Form>
-                  )}
-                </Formik>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="signup"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Formik
-                  initialValues={{ fullName: '', email: '', password: '', confirmPassword: '' }}
-                  validationSchema={signupSchema}
-                  onSubmit={(values) => console.log(values)}
-                >
-                  {({ errors, touched }) => (
-                    <Form className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-brand-deep mb-1">Full Name</label>
-                        <Field
-                          name="fullName"
-                          placeholder="John Doe"
-                          className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-brand-accent/50 transition-all ${
-                            errors.fullName && touched.fullName ? 'border-error bg-error/5' : 'border-border'
-                          }`}
-                        />
-                        {errors.fullName && touched.fullName && <p className="text-xs text-error mt-1">{errors.fullName}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-semibold text-brand-deep mb-1">Work Email</label>
-                        <Field
-                          name="email"
-                          type="email"
-                          placeholder="name@company.com"
-                          className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-brand-accent/50 transition-all ${
-                            errors.email && touched.email ? 'border-error bg-error/5' : 'border-border'
-                          }`}
-                        />
-                        {errors.email && touched.email && <p className="text-xs text-error mt-1">{errors.email}</p>}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-brand-deep mb-1">Password</label>
-                          <Field
-                            name="password"
-                            type="password"
-                            placeholder="••••••••"
-                            className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-brand-accent/50 transition-all ${
-                              errors.password && touched.password ? 'border-error bg-error/5' : 'border-border'
-                            }`}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-semibold text-brand-deep mb-1">Confirm</label>
-                          <Field
-                            name="confirmPassword"
-                            type="password"
-                            placeholder="••••••••"
-                            className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-brand-accent/50 transition-all ${
-                              errors.confirmPassword && touched.confirmPassword ? 'border-error bg-error/5' : 'border-border'
-                            }`}
-                          />
-                        </div>
-                      </div>
-                      {(errors.password && touched.password) || (errors.confirmPassword && touched.confirmPassword) ? (
-                        <p className="text-xs text-error mt-1">{errors.password || errors.confirmPassword}</p>
-                      ) : null}
-
-                      <button
-                        type="submit"
-                        className="w-full py-3 bg-brand-deep text-white font-bold rounded-lg hover:bg-opacity-90 transition-all shadow-md mt-4"
-                      >
-                        Create Account
-                      </button>
-                    </Form>
-                  )}
-                </Formik>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="mt-8 text-center">
-            <p className="text-sm text-text-secondary font-medium">
-              {activeTab === 'signin' ? "Don't have an account?" : "Already have an account?"}{' '}
-              <button 
-                onClick={() => setActiveTab(activeTab === 'signin' ? 'signup' : 'signin')}
-                className="text-brand-accent font-bold hover:underline ml-1"
-              >
-                {activeTab === 'signin' ? 'Sign Up' : 'Sign In'}
-              </button>
+        )}
+      </div>
+      <AnimatePresence>
+        {hasError && (
+          <motion.div 
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            className="flex items-center gap-1.5 pl-3"
+          >
+            <p className="text-[9px] text-red-400 font-bold tracking-wider uppercase">
+              {errors[name]}
             </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const Auth = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const toggleAuth = () => {
+    setIsLogin(!isLogin);
+    setShowPassword(false);
+  };
+
+  return (
+    <div className="h-screen w-screen bg-[#030712] flex items-center justify-center p-4 font-sans selection:bg-[#12E7FF]/30 relative overflow-hidden">
+      
+      {/* Dynamic Background Blur Effects */}
+      <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] bg-[#12E7FF]/10 rounded-full blur-[140px] animate-pulse" />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[40%] h-[40%] bg-[#12E7FF]/5 rounded-full blur-[120px]" />
+
+      {/* Back to Home Button - Top Left */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-gray-400 hover:text-[#12E7FF] bg-white/[0.03] backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 transition-all hover:bg-white/[0.08] group"
+      >
+        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+        <span className="text-xs font-semibold tracking-wide">Back to Home</span>
+      </Link>
+
+      <div className="w-full max-w-[1000px] h-[600px] flex rounded-[40px] overflow-hidden shadow-[0_0_120px_rgba(0,0,0,0.9)] border border-white/10 relative bg-white/[0.01] backdrop-blur-lg">
+        
+        {/* Sliding Side Panel (Glassmorph) */}
+        <motion.div 
+          animate={{ x: isLogin ? '0%' : '100%' }}
+          transition={{ type: 'spring', stiffness: 90, damping: 25 }}
+          className="absolute top-0 left-0 w-1/2 h-full z-20 hidden md:flex flex-col items-center justify-center p-12 text-center"
+        >
+          {/* Panel Overlay with Brand Gradient */}
+          <div className="absolute inset-0 bg-[#12E7FF] backdrop-blur-2xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-black/10 pointer-events-none" />
+          
+          <div className="relative z-30 px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={isLogin ? 'panel-login' : 'panel-signup'}
+              className="space-y-6"
+            >
+              <div className="bg-[#030712] w-14 h-14 rounded-2xl flex items-center justify-center mx-auto shadow-2xl mb-2">
+                <ShieldCheck size={28} className="text-[#12E7FF]" />
+              </div>
+              <h2 className="text-4xl font-black text-[#030712] leading-[1.1] tracking-tight">
+                {!isLogin ? 'Already Syncing?' : 'New to BYND?'}
+              </h2>
+              <p className="text-[#030712]/60 text-base font-bold leading-relaxed max-w-[320px] mx-auto">
+                {!isLogin 
+                  ? 'Re-establish your bidirectional data nodes and manage global sync assets.' 
+                  : 'Initialize your sovereign data engine and eliminate manual entry overhead.'}
+              </p>
+              <button
+                onClick={toggleAuth}
+                className="mt-6 px-12 py-3.5 bg-[#030712] text-[#12E7FF] font-black rounded-xl hover:shadow-[0_15px_30px_rgba(0,0,0,0.3)] transition-all duration-500 uppercase tracking-widest text-[10px] active:scale-95 border-b-4 border-black/20"
+              >
+                {!isLogin ? 'Authorize' : 'Join Now'}
+              </button>
+            </motion.div>
           </div>
         </motion.div>
+
+        {/* Content Section */}
+        <div className="flex w-full flex-col md:flex-row relative">
+          
+          {/* Sign Up Section */}
+          <div className={`w-full md:w-1/2 p-10 md:p-12 flex flex-col justify-center transition-all duration-700 delay-100 ${isLogin ? 'md:opacity-0 md:translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'}`}>
+            <div className="max-w-[360px] mx-auto w-full">
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                   <span className="text-[9px] font-black text-[#12E7FF] tracking-[0.3em] uppercase">Sovereign Onboarding</span>
+                </div>
+                <h1 className="text-3xl font-black text-white mb-2 tracking-tighter">Initiate Node</h1>
+                <p className="text-gray-500 font-bold text-xs">Establish your profile within the BYND ecosystem.</p>
+              </div>
+
+              <Formik
+                initialValues={{ fullName: '', email: '', password: '', referralCode: '' }}
+                validationSchema={signupSchema}
+                onSubmit={(values) => console.log('BYND Signup:', values)}
+              >
+                {({ errors, touched, isSubmitting }) => (
+                  <Form className="space-y-3.5">
+                    <InputField 
+                      name="fullName" type="text" placeholder="Identity: Full Name" icon={User}
+                      errors={errors} touched={touched}
+                    />
+                    <InputField 
+                      name="email" type="email" placeholder="Node: Professional Email" icon={Mail}
+                      errors={errors} touched={touched}
+                    />
+                    <InputField 
+                      name="password" type="password" placeholder="Access: Security Key" icon={Lock}
+                      errors={errors} touched={touched}
+                      showPassword={showPassword} setShowPassword={setShowPassword}
+                    />
+                    <InputField 
+                      name="referralCode" type="text" placeholder="Partner Code" icon={Users}
+                      errors={errors} touched={touched}
+                    />
+
+                    <div className="pt-4 space-y-4">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full py-4 bg-[#12E7FF] text-[#030712] font-black rounded-xl hover:shadow-[0_0_30px_rgba(18,231,255,0.3)] transition-all duration-500 flex items-center justify-center gap-3 group active:scale-[0.98] disabled:opacity-50 text-xs"
+                      >
+                        INITIALIZE SYNC
+                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      </button>
+
+                      <div className="relative py-1 flex items-center justify-center">
+                        <div className="w-full border-t border-white/5 absolute"></div>
+                        <span className="relative bg-[#030712] px-4 text-[8px] font-black text-gray-600 tracking-[0.4em] uppercase">Enterprise Auth</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="w-full py-3 bg-white/[0.02] border border-white/10 text-white font-black rounded-xl hover:bg-white/[0.08] flex items-center justify-center gap-3 transition-all duration-300 text-xs"
+                      >
+                        <Globe size={16} className="text-[#12E7FF]" />
+                        Sync with Google
+                      </button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+              
+              <p className="mt-8 text-center text-[10px] text-gray-600 md:hidden font-black uppercase tracking-widest">
+                Existing Node? <button onClick={toggleAuth} className="text-[#12E7FF]">Authorize</button>
+              </p>
+            </div>
+          </div>
+
+          {/* Login Section */}
+          <div className={`w-full md:w-1/2 p-10 md:p-12 flex flex-col justify-center transition-all duration-700 delay-100 ${!isLogin ? 'md:opacity-0 md:-translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'}`}>
+            <div className="max-w-[360px] mx-auto w-full">
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-2">
+                   <span className="text-[9px] font-black text-[#12E7FF] tracking-[0.3em] uppercase">Sovereign Access</span>
+                </div>
+                <h1 className="text-3xl font-black text-white mb-2 tracking-tighter">Re-Auth</h1>
+                <p className="text-gray-500 font-bold text-xs">Validate your secure bidirectional channels.</p>
+              </div>
+
+              <Formik
+                initialValues={{ email: '', password: '' }}
+                validationSchema={loginSchema}
+                onSubmit={(values) => console.log('BYND Login:', values)}
+              >
+                {({ errors, touched, isSubmitting }) => (
+                  <Form className="space-y-4">
+                    <InputField 
+                      name="email" type="email" placeholder="Account Sync Email" icon={Mail}
+                      errors={errors} touched={touched}
+                    />
+                    <div className="space-y-2">
+                      <InputField 
+                        name="password" type="password" placeholder="Access Key" icon={Lock}
+                        errors={errors} touched={touched}
+                        showPassword={showPassword} setShowPassword={setShowPassword}
+                      />
+                      <div className="flex justify-end pr-1">
+                        <Link to="/forgot-password" size="sm" className="text-[9px] font-black text-[#12E7FF]/50 hover:text-[#12E7FF] transition-colors tracking-widest uppercase italic">
+                          Lost Credentials?
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="pt-8 space-y-4">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full py-4 bg-[#12E7FF] text-[#030712] font-black rounded-xl hover:shadow-[0_0_30px_rgba(18,231,255,0.3)] transition-all duration-500 flex items-center justify-center gap-3 group active:scale-[0.98] disabled:opacity-50 text-xs"
+                      >
+                        ESTABLISH CONNECTION
+                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      </button>
+
+                      <div className="relative py-1 flex items-center justify-center">
+                        <div className="w-full border-t border-white/5 absolute"></div>
+                        <span className="relative bg-[#030712] px-4 text-[8px] font-black text-gray-600 tracking-[0.4em] uppercase">Enterprise Auth</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="w-full py-3 bg-white/[0.02] border border-white/10 text-white font-black rounded-xl hover:bg-white/[0.08] flex items-center justify-center gap-3 transition-all duration-300 text-xs"
+                      >
+                        <Globe size={16} className="text-[#12E7FF]" />
+                        Sync with Google
+                      </button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+
+              <p className="mt-8 text-center text-[10px] text-gray-600 md:hidden font-black uppercase tracking-widest">
+                New Engine? <button onClick={toggleAuth} className="text-[#12E7FF]">Initialize</button>
+              </p>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   );
