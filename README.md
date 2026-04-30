@@ -1,6 +1,6 @@
 # BYND (Sovereign Data Sync Engine)
 
-![BYND Logo](https://via.placeholder.com/600x200/030712/12E7FF?text=BYND+SOVEREIGN+SYNC)
+![BYND Official Logo](frontend/src/assets/logo_official.svg)
 
 **BYND** (Go Beyond Manual Data Entry) is the industry-leading, no-code bidirectional sync engine designed for the modern enterprise. We connect Excel, CRM, and Invoicing ecosystems with cryptographic precision, enabling global SMBs to reclaim their time and ensure 100% data parity.
 
