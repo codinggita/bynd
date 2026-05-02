@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /conflicts
+Disallow: /pending
+Disallow: /contracts
+Disallow: /history
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /auth
+
+Sitemap: https://bynd-sync.com/sitemap.xml
