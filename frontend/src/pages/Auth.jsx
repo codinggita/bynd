@@ -45,70 +45,94 @@ const signupSchema = Yup.object().shape({
     .matches(/[@$!%*?&]/, 'Must include at least one special character (@$!%*?&)')
     .required('Secure access key is mandatory'),
   referralCode: Yup.string()
+    .transform((value) => (value === '' ? undefined : value))
     .min(4, 'Invalid format: Code too short')
-    .required('Authorized BYND Partner Code is mandatory for onboarding'),
+    .optional(),
 });
 
-const InputField = ({ name, type, placeholder, icon: Icon, errors, touched, showPassword, setShowPassword }) => {
-  const isPasswordField = name === 'password';
-  const hasError = errors[name] && touched[name];
+import InputField from '../components/InputField';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../store/slices/authSlice';
+import { login, register } from '../services/api';
+import { useAnalytics } from '../hooks/useAnalytics';
+import toast from 'react-hot-toast';
+import SEO from '../components/SEO';
 
-  return (
-    <div className="space-y-1">
-      <div className="relative group">
-        <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-10 
-          ${hasError ? 'text-red-400' : 'text-gray-500 group-focus-within:text-[#12E7FF] group-focus-within:scale-110'}`}>
-          <Icon size={18} />
-        </div>
-        <Field
-          name={name}
-          type={isPasswordField ? (showPassword ? 'text' : 'password') : type}
-          placeholder={placeholder}
-          className={`w-full bg-white/[0.03] backdrop-blur-md text-white pl-11 pr-11 py-3 rounded-xl border transition-all duration-500 outline-none placeholder:text-gray-600 text-sm
-            ${hasError 
-              ? 'border-red-500/40 focus:border-red-500 bg-red-500/5 shadow-[0_0_15px_rgba(239,68,68,0.1)]' 
-              : 'border-white/10 focus:border-[#12E7FF] focus:bg-white/[0.06] focus:shadow-[0_0_20px_rgba(18,231,255,0.15)]'
-            }`}
-        />
-        {isPasswordField && (
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#12E7FF] transition-colors z-10"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        )}
-      </div>
-      <AnimatePresence>
-        {hasError && (
-          <motion.div 
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            className="flex items-center gap-1.5 pl-3"
-          >
-            <p className="text-[9px] text-red-400 font-bold tracking-wider uppercase">
-              {errors[name]}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+// Password Security Requirements
+const PWD_REQUIREMENTS = [
+  { label: 'Minimum 8 characters', regex: /.{8,}/ },
+  { label: 'At least one uppercase letter', regex: /[A-Z]/ },
+  { label: 'At least one numeric digit', regex: /[0-9]/ },
+  { label: 'At least one special character', regex: /[@$!%*?&]/ },
+];
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
+  const [searchParams] = useSearchParams();
+
+  // Show expired session toast if redirected from interceptor
+  React.useEffect(() => {
+    if (searchParams.get('session') === 'expired') {
+      toast.error('Your session has expired. Please sign in again.', { duration: 5000 });
+    }
+    if (searchParams.get('mode') === 'signup') {
+      setIsLogin(false);
+    }
+  }, [searchParams]);
 
   const toggleAuth = () => {
     setIsLogin(!isLogin);
     setShowPassword(false);
   };
 
+  const handleSignup = async (values, { setSubmitting }) => {
+    try {
+      const payload = {
+        name: values.fullName,
+        email: values.email,
+        password: values.password,
+        organization: 'Enterprise Node',
+        partnerCode: values.referralCode
+      };
+      
+      const res = await register(payload);
+      trackEvent('Account Created', 'Authentication', 'Signup Success', 1);
+      dispatch(loginSuccess({ user: res.data.user, token: res.data.token }));
+      toast.success(`Welcome to BYND, ${res.data.user.name}!`);
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err.response?.data?.msg || 'Node Initialization Failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleLogin = async (values, { setSubmitting }) => {
+    try {
+      const res = await login(values);
+      trackEvent('Identity Authorized', 'Authentication', 'Login Success', 1);
+      dispatch(loginSuccess({ user: res.data.user, token: res.data.token }));
+      toast.success('Sovereign Access Granted');
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err.response?.data?.msg || 'Authentication Vector Failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="h-screen w-screen bg-[#030712] flex items-center justify-center p-4 font-sans selection:bg-[#12E7FF]/30 relative overflow-hidden">
+      <SEO 
+        title="Secure Node Authorization" 
+        description="Access your sovereign data engine. Sign in or initialize your node to start bidirectional synchronization across your enterprise stack."
+        noindex={true}
+      />
       
       {/* Dynamic Background Blur Effects */}
       <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] bg-[#12E7FF]/10 rounded-full blur-[140px] animate-pulse" />
@@ -180,25 +204,27 @@ const Auth = () => {
               <Formik
                 initialValues={{ fullName: '', email: '', password: '', referralCode: '' }}
                 validationSchema={signupSchema}
-                onSubmit={(values) => console.log('BYND Signup:', values)}
+                onSubmit={handleSignup}
               >
-                {({ errors, touched, isSubmitting }) => (
-                  <Form className="space-y-3.5">
+                {({ errors, touched, isSubmitting, values }) => (
+                  <Form className="space-y-4">
                     <InputField 
-                      name="fullName" type="text" placeholder="Identity: Full Name" icon={User}
+                      name="fullName" type="text" placeholder="Identity: John Doe" icon={User}
                       errors={errors} touched={touched}
                     />
                     <InputField 
-                      name="email" type="email" placeholder="Node: Professional Email" icon={Mail}
+                      name="email" type="email" placeholder="Node: john@enterprise.com" icon={Mail}
                       errors={errors} touched={touched}
                     />
                     <InputField 
                       name="password" type="password" placeholder="Access: Security Key" icon={Lock}
                       errors={errors} touched={touched}
                       showPassword={showPassword} setShowPassword={setShowPassword}
+                      requirements={PWD_REQUIREMENTS}
+                      value={values.password}
                     />
                     <InputField 
-                      name="referralCode" type="text" placeholder="Partner Code" icon={Users}
+                      name="referralCode" type="text" placeholder="Partner Code (Optional)" icon={Users}
                       errors={errors} touched={touched}
                     />
 
@@ -249,17 +275,17 @@ const Auth = () => {
               <Formik
                 initialValues={{ email: '', password: '' }}
                 validationSchema={loginSchema}
-                onSubmit={(values) => console.log('BYND Login:', values)}
+                onSubmit={handleLogin}
               >
                 {({ errors, touched, isSubmitting }) => (
-                  <Form className="space-y-4">
+                  <Form className="space-y-5">
                     <InputField 
-                      name="email" type="email" placeholder="Account Sync Email" icon={Mail}
+                      name="email" type="email" placeholder="Node: john@enterprise.com" icon={Mail}
                       errors={errors} touched={touched}
                     />
                     <div className="space-y-2">
                       <InputField 
-                        name="password" type="password" placeholder="Access Key" icon={Lock}
+                        name="password" type="password" placeholder="Sovereign Access Key" icon={Lock}
                         errors={errors} touched={touched}
                         showPassword={showPassword} setShowPassword={setShowPassword}
                       />
