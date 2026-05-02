@@ -12,6 +12,7 @@ import {
   Loader2,
   Lock
 } from 'lucide-react';
+import { forgotPassword as forgotPasswordApi } from '../services/api';
 
 const ForgotPassword = () => {
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
@@ -25,12 +26,14 @@ const ForgotPassword = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     setStatus('loading');
     
-    // Simulating API Call
-    setTimeout(() => {
-      // For demonstration, we'll succeed. You can change to 'error' to test.
+    try {
+      await forgotPasswordApi({ email: values.email });
       setStatus('success');
+    } catch (err) {
+      setStatus('error');
+    } finally {
       setSubmitting(false);
-    }, 2500);
+    }
   };
 
   return (

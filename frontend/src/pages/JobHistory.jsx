@@ -26,7 +26,12 @@ import toast from 'react-hot-toast';
 
 const JobHistory = () => {
   const [selectedJob, setSelectedJob] = useState(null);
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState(sessionStorage.getItem('jobFilter') || 'All');
+
+  const handleFilterChange = (f) => {
+    setFilter(f);
+    sessionStorage.setItem('jobFilter', f);
+  };
 
   const stats = [
     { label: 'TOTAL EXECUTIONS', value: '14,202', icon: <History size={18} />, color: '#12E7FF' },
@@ -43,50 +48,63 @@ const JobHistory = () => {
     { id: 'JOB-9917', name: 'Legacy Data Migration', status: 'Success', records: '1.2M', duration: '45m', timestamp: '2024-04-29 15:30', source: 'On-Prem DB', target: 'Azure Cloud' },
   ];
 
+  const filteredJobs = filter === 'All' 
+    ? jobs 
+    : jobs.filter(j => j.status === filter);
+
   const handleReRun = (id) => {
     toast.success(`Job ${id} re-initialized in background protocol.`, {
       icon: '🔄',
     });
   };
 
+  const handleExport = () => {
+    const csv = ['Job ID,Name,Status,Records,Duration,Timestamp,Source,Target',
+      ...jobs.map(j => `${j.id},${j.name},${j.status},${j.records},${j.duration},${j.timestamp},${j.source},${j.target}`)
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'sync_history.csv'; a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Sync ledger exported as CSV');
+  };
+
   return (
-    <div className="h-screen w-screen bg-[#030712] text-white font-sans selection:bg-[#12E7FF]/30 relative overflow-hidden flex flex-col">
+    <div className="space-y-8 relative pb-20">
       <SEO 
         title="Historical Sync Ledger" 
         description="Audit every data sync operation across your global enterprise nodes with BYND." 
       />
 
-      {/* Cinematic Aura */}
-      <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#12E7FF]/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none" />
+      {/* Page Toolbar */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-black tracking-tight uppercase italic text-white">Historical <span className="text-[#12E7FF]">Sync Ledger</span></h1>
+          <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">Immutable Audit Trail v4.0</p>
+        </div>
 
-      {/* Header Bar */}
-      <header className="px-10 py-6 border-b border-white/5 flex justify-between items-center bg-[#030712]/50 backdrop-blur-2xl relative z-50">
-        <div className="flex items-center gap-8">
-          <Link to="/dashboard" className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors group">
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Dashboard</span>
-          </Link>
-          <div className="h-6 w-px bg-white/10" />
-          <div>
-             <h1 className="text-xl font-black tracking-tight uppercase italic">Historical <span className="text-[#12E7FF]">Sync Ledger</span></h1>
-             <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.3em] mt-0.5">Immutable Audit Trail v4.0</p>
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative flex-1 md:w-64 group">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#12E7FF] transition-colors" />
+            <input 
+              type="text" 
+              placeholder="SEARCH NODE / JOB ID..."
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-[10px] font-bold uppercase tracking-widest text-white focus:outline-none focus:border-[#12E7FF]/50 transition-all"
+            />
           </div>
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
+          >
+            <Download size={16} className="text-gray-400 group-hover:text-[#12E7FF]" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Export Ledger</span>
+          </button>
         </div>
-
-        <div className="flex items-center gap-6">
-           <div className="relative group">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#12E7FF] transition-colors" />
-              <input type="text" placeholder="Search by Job ID or Node..." className="bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs outline-none focus:border-[#12E7FF]/30 transition-all w-72" />
-           </div>
-           <button className="bg-white/5 border border-white/10 p-2.5 rounded-xl text-gray-500 hover:text-white transition-all">
-              <Download size={18} />
-           </button>
-        </div>
-      </header>
+      </div>
 
       {/* Stats Summary Row */}
-      <section className="px-10 py-8 grid grid-cols-1 md:grid-cols-4 gap-6 relative z-40">
+      <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
           <motion.div
             key={i}
@@ -118,7 +136,7 @@ const JobHistory = () => {
                     {['All', 'Success', 'Failed'].map(f => (
                       <button 
                         key={f}
-                        onClick={() => setFilter(f)}
+                        onClick={() => handleFilterChange(f)}
                         className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border
                           ${filter === f ? 'bg-[#12E7FF] text-[#030712] border-[#12E7FF]' : 'border-white/10 text-gray-500 hover:border-white/20'}`}
                       >
@@ -148,7 +166,7 @@ const JobHistory = () => {
                    </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                   {jobs.map((job, i) => (
+                   {filteredJobs.map((job, i) => (
                      <motion.tr 
                        key={job.id}
                        initial={{ opacity: 0, x: -10 }}
@@ -205,7 +223,7 @@ const JobHistory = () => {
            {/* Table Footer / Info */}
            <div className="p-6 border-t border-white/5 bg-white/[0.01] flex justify-between items-center">
               <div className="flex items-center gap-4">
-                 <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Showing 1-10 of 14,202 Historical Logs</p>
+                 <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Showing {filteredJobs.length} of {jobs.length} Historical Logs</p>
               </div>
               <div className="flex gap-2">
                  <button className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all text-gray-500">Previous</button>
