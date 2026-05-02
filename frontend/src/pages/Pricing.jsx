@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import Footer from '../components/Footer';
 import Logo from '../components/Logo';
+import SEO from '../components/SEO';
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(true);
@@ -75,6 +76,10 @@ const Pricing = () => {
       onMouseMove={handleMouseMove}
       className="min-h-screen bg-[#030712] text-white font-sans selection:bg-[#12E7FF]/30 relative overflow-x-hidden pb-0"
     >
+      <SEO 
+        title="Enterprise Pricing Protocols" 
+        description="Choose the right synchronization tier for your organization. From scaling startups to global enterprises, BYND has a plan for your data sovereignty."
+      />
       {/* Kinetic Spotlight Effect */}
       <div 
         className="fixed inset-0 pointer-events-none z-0 opacity-40 transition-opacity duration-1000"
