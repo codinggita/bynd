@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GithubLogo, TwitterLogo, LinkedinLogo } from '@phosphor-icons/react';
 import Logo from './Logo';
 
 const Footer = () => {
@@ -15,17 +14,6 @@ const Footer = () => {
             <p className="text-text-secondary text-sm leading-relaxed mb-6">
               The next-generation bidirectional sync engine for your business data.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-text-secondary hover:text-brand-accent transition-colors">
-                <GithubLogo size={24} />
-              </a>
-              <a href="#" className="text-text-secondary hover:text-brand-accent transition-colors">
-                <TwitterLogo size={24} />
-              </a>
-              <a href="#" className="text-text-secondary hover:text-brand-accent transition-colors">
-                <LinkedinLogo size={24} />
-              </a>
-            </div>
           </div>
 
           <div>
@@ -33,17 +21,16 @@ const Footer = () => {
             <ul className="space-y-4">
               <li><Link to="/features" className="text-sm text-text-secondary hover:text-white transition-colors">Features</Link></li>
               <li><Link to="/pricing" className="text-sm text-text-secondary hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link to="/integrations" className="text-sm text-text-secondary hover:text-white transition-colors">Integrations</Link></li>
-              <li><Link to="/security" className="text-sm text-text-secondary hover:text-white transition-colors">Security</Link></li>
+              <li><Link to="/docs" className="text-sm text-text-secondary hover:text-white transition-colors">Documentation</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-6">Company</h4>
+            <h4 className="font-semibold mb-6">Platform</h4>
             <ul className="space-y-4">
-              <li><Link to="/about" className="text-sm text-text-secondary hover:text-white transition-colors">About</Link></li>
-              <li><Link to="/blog" className="text-sm text-text-secondary hover:text-white transition-colors">Blog</Link></li>
-              <li><Link to="/careers" className="text-sm text-text-secondary hover:text-white transition-colors">Careers</Link></li>
+              <li><Link to="/auth" className="text-sm text-text-secondary hover:text-white transition-colors">Sign In</Link></li>
+              <li><Link to="/onboarding" className="text-sm text-text-secondary hover:text-white transition-colors">Get Started</Link></li>
+              <li><Link to="/about" className="text-sm text-text-secondary hover:text-white transition-colors">About BYND</Link></li>
               <li><Link to="/contact" className="text-sm text-text-secondary hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>
@@ -53,14 +40,13 @@ const Footer = () => {
             <ul className="space-y-4">
               <li><Link to="/privacy" className="text-sm text-text-secondary hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="text-sm text-text-secondary hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><Link to="/cookies" className="text-sm text-text-secondary hover:text-white transition-colors">Cookie Policy</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-text-secondary">
-            © 2024 BYND Technologies. All rights reserved.
+            © {new Date().getFullYear()} BYND Technologies. All rights reserved.
           </p>
           <div className="flex gap-8">
             <span className="text-xs text-text-secondary">Built for global SMBs</span>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -15,11 +15,29 @@ import {
   ShieldCheck,
   Zap
 } from 'lucide-react';
+import { useAnalytics } from '../hooks/useAnalytics';
+import FileUpload from '../components/FileUpload';
 
 const Onboarding = () => {
-  const [step, setStep] = useState(1);
-  const [selectedSources, setSelectedSources] = useState([]);
+  const { trackEvent } = useAnalytics();
+  const [step, setStep] = useState(() => {
+    const saved = sessionStorage.getItem('onboardingStep');
+    return saved ? parseInt(saved, 10) : 1;
+  });
+  const [selectedSources, setSelectedSources] = useState(() => {
+    const saved = sessionStorage.getItem('onboardingSources');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [syncDirection, setSyncDirection] = useState('bidirectional');
+
+  // Persist step and sources on change
+  useEffect(() => {
+    sessionStorage.setItem('onboardingStep', step.toString());
+  }, [step]);
+
+  useEffect(() => {
+    sessionStorage.setItem('onboardingSources', JSON.stringify(selectedSources));
+  }, [selectedSources]);
 
   const sources = [
     { id: 'excel', name: 'Excel / Sheets', icon: <FileSpreadsheet className="text-green-400" /> },
@@ -108,6 +126,16 @@ const Onboarding = () => {
                     </button>
                   ))}
                 </div>
+
+                {selectedSources.includes('excel') && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-xl mx-auto w-full pt-4"
+                  >
+                    <FileUpload onFileSelect={(file) => console.log('File selected:', file)} />
+                  </motion.div>
+                )}
 
                 <div className="flex justify-center">
                   <button 
@@ -247,7 +275,11 @@ const Onboarding = () => {
 
                    <div className="flex justify-center gap-4">
                       <button onClick={handleBack} className="px-10 py-4.5 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all">PREVIOUS</button>
-                      <Link to="/" className="px-16 py-4.5 bg-[#12E7FF] text-[#030712] font-black rounded-2xl flex items-center gap-3 hover:shadow-[0_0_40px_rgba(18,231,255,0.6)] transition-all group scale-110 origin-center">
+                      <Link 
+                        to="/" 
+                        onClick={() => trackEvent('Onboarding Finalized', 'Conversion', 'Deployment Check', 1)}
+                        className="px-16 py-4.5 bg-[#12E7FF] text-[#030712] font-black rounded-2xl flex items-center gap-3 hover:shadow-[0_0_40px_rgba(18,231,255,0.6)] transition-all group scale-110 origin-center"
+                      >
                         FINALIZE DEPLOYMENT
                         <Check size={22} className="group-hover:scale-125 transition-transform" />
                       </Link>
