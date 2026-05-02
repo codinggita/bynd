@@ -756,9 +756,9 @@ const Landing = () => {
                      {plan.price !== 'Custom' && <span className="text-slate-600 font-black uppercase text-xs tracking-widest">/ Epoch</span>}
                    </div>
 
-                   <button className={`w-full py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] mb-12 transition-all ${plan.popular ? 'bg-[#00E5FF] text-[#0A1929] shadow-[0_20px_40px_#00E5FF40] hover:scale-[1.02]' : 'bg-white/5 text-white border border-white/20 hover:bg-white/10'}`}>
+                   <Link to="/auth?mode=signup" className={`w-full py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] mb-12 transition-all block text-center ${plan.popular ? 'bg-[#00E5FF] text-[#0A1929] shadow-[0_20px_40px_#00E5FF40] hover:scale-[1.02]' : 'bg-white/5 text-white border border-white/20 hover:bg-white/10'}`}>
                       Initialize Node
-                   </button>
+                   </Link>
 
                    <ul className="space-y-6 flex-1">
                       {plan.features.map((f, i) => (
@@ -836,9 +836,9 @@ const Landing = () => {
                     className="px-12 py-6 bg-[#00E5FF] text-[#0A1929] rounded-[32px] font-black uppercase text-sm tracking-[0.3em] shadow-[0_30px_60px_#00E5FF40] hover:scale-105 transition-transform">
                     Initialize Deployment
                  </button>
-                 <button className="px-12 py-6 bg-white/5 border border-white/20 text-white rounded-[32px] font-black uppercase text-sm tracking-[0.3em] hover:bg-white/10 transition-all">
+                 <Link to="/contact" className="px-12 py-6 bg-white/5 border border-white/20 text-white rounded-[32px] font-black uppercase text-sm tracking-[0.3em] hover:bg-white/10 transition-all inline-block">
                     Request Architecture Audit
-                 </button>
+                 </Link>
               </div>
             </motion.div>
           </div>
