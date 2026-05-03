@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -20,60 +20,90 @@ import {
   Activity
 } from 'lucide-react';
 import Logo from '../components/Logo';
+import toast from 'react-hot-toast';
+
+const defaultEntities = [
+  { id: 'ENT-4021', type: 'Invoice Batch', source: 'Excel Node 01', risk: 'Low', status: 'Verified', date: '2024-04-29 14:20' },
+  { id: 'ENT-4022', type: 'Customer CRM Lead', source: 'Salesforce Node', risk: 'Medium', status: 'Pending', date: '2024-04-29 14:15' },
+  { id: 'ENT-4023', type: 'Product Inventory', source: 'SAP ERP Node', risk: 'High', status: 'Blocked', date: '2024-04-29 14:10' },
+  { id: 'ENT-4024', type: 'Global Tax Record', source: 'Custom API Node', risk: 'Low', status: 'Verified', date: '2024-04-29 14:05' },
+  { id: 'ENT-4025', type: 'Vendor Contract', source: 'Excel Node 02', risk: 'Low', status: 'Verified', date: '2024-04-29 14:00' },
+];
 
 const PendingEntities = () => {
   const [selectedEntity, setSelectedEntity] = useState(null);
+  const [activeFilter, setActiveFilter] = useState('All');
+
+  const [entities, setEntities] = useState(() => {
+    const saved = localStorage.getItem('pendingEntities');
+    return saved ? JSON.parse(saved) : defaultEntities;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('pendingEntities', JSON.stringify(entities));
+  }, [entities]);
+
+  const handleAuthorize = (id) => {
+    setEntities(prev => prev.map(e => e.id === id ? { ...e, status: 'Authorized' } : e));
+    setSelectedEntity(null);
+    toast.success(`Entity ${id} authorized for global sync`);
+  };
+
+  const handleReject = (id) => {
+    setEntities(prev => prev.map(e => e.id === id ? { ...e, status: 'Rejected' } : e));
+    setSelectedEntity(null);
+    toast.success(`Entity ${id} rejected and quarantined`);
+  };
+
+  const handleAuthorizeAll = () => {
+    setEntities(prev => prev.map(e => ({ ...e, status: 'Authorized' })));
+    toast.success('All entities authorized for global sync');
+  };
+
+  const pendingCount = entities.filter(e => e.status === 'Pending' || e.status === 'Verified').length;
+  const blockedCount = entities.filter(e => e.status === 'Blocked').length;
+  const authorizedCount = entities.filter(e => e.status === 'Authorized').length;
+
+  const filteredEntities = activeFilter === 'All' 
+    ? entities 
+    : activeFilter === 'Critical' 
+      ? entities.filter(e => e.risk === 'High' || e.status === 'Blocked')
+      : entities.filter(e => e.status === 'Verified' || e.status === 'Authorized');
 
   const stats = [
-    { label: 'TOTAL STAGED', value: '412', icon: <Layers size={18} />, color: '#12E7FF' },
-    { label: 'AWAITING APPROVAL', value: '84', icon: <UserCheck size={18} />, color: '#FACC15' },
-    { label: 'SECURITY BLOCKED', value: '3', icon: <AlertCircle size={18} />, color: '#F87171' },
-    { label: 'READY TO COMMIT', value: '325', icon: <CheckCircle2 size={18} />, color: '#10B981' },
-  ];
-
-  const entities = [
-    { id: 'ENT-4021', type: 'Invoice Batch', source: 'Excel Node 01', risk: 'Low', status: 'Verified', date: '2024-04-29 14:20' },
-    { id: 'ENT-4022', type: 'Customer CRM Lead', source: 'Salesforce Node', risk: 'Medium', status: 'Pending', date: '2024-04-29 14:15' },
-    { id: 'ENT-4023', type: 'Product Inventory', source: 'SAP ERP Node', risk: 'High', status: 'Blocked', date: '2024-04-29 14:10' },
-    { id: 'ENT-4024', type: 'Global Tax Record', source: 'Custom API Node', risk: 'Low', status: 'Verified', date: '2024-04-29 14:05' },
-    { id: 'ENT-4025', type: 'Vendor Contract', source: 'Excel Node 02', risk: 'Low', status: 'Verified', date: '2024-04-29 14:00' },
+    { label: 'TOTAL STAGED', value: String(entities.length), icon: <Layers size={18} />, color: '#12E7FF' },
+    { label: 'AWAITING APPROVAL', value: String(pendingCount), icon: <UserCheck size={18} />, color: '#FACC15' },
+    { label: 'SECURITY BLOCKED', value: String(blockedCount), icon: <AlertCircle size={18} />, color: '#F87171' },
+    { label: 'AUTHORIZED', value: String(authorizedCount), icon: <CheckCircle2 size={18} />, color: '#10B981' },
   ];
 
   return (
-    <div className="h-screen w-screen bg-[#030712] text-white font-sans selection:bg-[#12E7FF]/30 relative overflow-hidden flex flex-col">
+    <div className="space-y-8 relative pb-20">
       
-      {/* Background Decorative Aura */}
-      <div className="absolute top-[-15%] right-[-5%] w-[50%] h-[50%] bg-[#12E7FF]/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute inset-0 opacity-[0.01] z-0 pointer-events-none" style={{ backgroundImage: `linear-gradient(#12E7FF 1px, transparent 1px), linear-gradient(90deg, #12E7FF 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
-
-      {/* Header Bar */}
-      <header className="px-10 py-6 border-b border-white/5 flex justify-between items-center bg-[#030712]/50 backdrop-blur-2xl relative z-50">
-        <div className="flex items-center gap-8">
-          <Link to="/dashboard" className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors group">
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Dashboard</span>
-          </Link>
-          <div className="h-6 w-px bg-white/10" />
-          <div>
-             <h1 className="text-xl font-black tracking-tight uppercase">Staging <span className="text-[#12E7FF]">Protocol Hub</span></h1>
-             <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.3em] mt-0.5 italic">Awaiting Global Sync Authorization</p>
-          </div>
+      {/* Page Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-black tracking-tight uppercase italic text-white">Staging <span className="text-[#12E7FF]">Protocol Hub</span></h1>
+          <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">Awaiting Global Sync Authorization</p>
         </div>
 
         <div className="flex items-center gap-4">
-           <div className="relative group">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#12E7FF] transition-colors" />
-              <input type="text" placeholder="Query entity pool..." className="bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs outline-none focus:border-[#12E7FF]/30 transition-all w-64" />
+           <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl flex items-center gap-3">
+              <Clock size={16} className="text-amber-400" />
+              <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">{pendingCount} Entities Staged</span>
            </div>
-           <button className="bg-[#12E7FF] text-[#030712] px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:shadow-[0_0_20px_#12E7FF] transition-all flex items-center gap-2 active:scale-95">
-              <ShieldCheck size={16} />
-              Authorize All
+           <button 
+             onClick={handleAuthorizeAll}
+             className="bg-[#12E7FF] text-[#030712] px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:shadow-[0_0_20px_#12E7FF] transition-all flex items-center gap-2"
+           >
+             <UserCheck size={14} />
+             Authorize All Nodes
            </button>
         </div>
-      </header>
+      </div>
 
       {/* Stats Section */}
-      <section className="px-10 pt-8 pb-4 relative z-40">
+      <section className="relative z-40">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
             <motion.div
@@ -107,7 +137,7 @@ const PendingEntities = () => {
                  <h2 className="text-lg font-black tracking-tight">Pending Entities <span className="text-gray-700 mx-2">/</span> <span className="text-xs text-gray-500">Live Pool</span></h2>
                  <div className="flex gap-2">
                     {['All', 'Critical', 'Staged'].map(f => (
-                      <button key={f} className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${f === 'All' ? 'bg-[#12E7FF] text-[#030712] border-[#12E7FF]' : 'border-white/10 text-gray-500 hover:border-white/20'}`}>
+                      <button key={f} onClick={() => setActiveFilter(f)} className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${activeFilter === f ? 'bg-[#12E7FF] text-[#030712] border-[#12E7FF]' : 'border-white/10 text-gray-500 hover:border-white/20'}`}>
                         {f}
                       </button>
                     ))}
@@ -133,7 +163,7 @@ const PendingEntities = () => {
                    </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                   {entities.map((ent, i) => (
+                   {filteredEntities.map((ent, i) => (
                      <motion.tr 
                        key={ent.id}
                        initial={{ opacity: 0, x: -10 }}
@@ -237,11 +267,11 @@ const PendingEntities = () => {
                 </div>
 
                 <div className="space-y-4 pt-10">
-                   <button className="w-full py-5 bg-[#12E7FF] text-[#030712] font-black rounded-2xl hover:shadow-[0_0_40px_#12E7FF] transition-all flex items-center justify-center gap-3 uppercase text-xs tracking-[0.2em]">
+                   <button onClick={() => handleAuthorize(selectedEntity.id)} className="w-full py-5 bg-[#12E7FF] text-[#030712] font-black rounded-2xl hover:shadow-[0_0_40px_#12E7FF] transition-all flex items-center justify-center gap-3 uppercase text-xs tracking-[0.2em]">
                       Authorize Sync
                       <CheckCircle2 size={20} />
                    </button>
-                   <button className="w-full py-5 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all uppercase text-xs tracking-[0.2em]">
+                   <button onClick={() => handleReject(selectedEntity.id)} className="w-full py-5 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all uppercase text-xs tracking-[0.2em]">
                       Reject Record
                    </button>
                 </div>

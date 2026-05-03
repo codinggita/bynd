@@ -14,12 +14,13 @@ BYND is the definitive no-code bidirectional sync engine. We bridge your CRM, ER
 ## Features Checklist
 - [x] Spline 3D Bidirectional Hero Integration
 - [x] Lenis Smooth Scrolling Engine
-- [ ] Drag-and-Drop Mapping (dnd-kit)
-- [ ] Automated Conflict Shield Resolution
-- [ ] Bidirectional / Unidirectional State Toggles
-- [ ] Custom Invoice Compliance Profiles
-- [ ] Interactive Action Tables and Expanding Rows
-- [ ] Dashboard KPI Sparklines (Recharts)
+- [x] High-Fidelity File Upload (Drag & Drop)
+- [x] Automated Conflict Shield (Null-Guarded)
+- [x] Bidirectional / Unidirectional State Logic
+- [x] Role-Based Access Control (Admin/User)
+- [x] Centralized Redux State Management
+- [x] SEO Optimized (Sitemap, Robots, JSON-LD)
+- [x] Fully Responsive & PWA Ready UI
 
 ## Tech Stack
 | Category | Technology |
