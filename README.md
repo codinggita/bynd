@@ -1,5 +1,7 @@
 # BYND (Sovereign Data Sync Engine)
 
+### 🚀 [Live Demo](https://bynd-sync.vercel.app) | 🎨 [Figma Design](https://www.figma.com/file/bynd-design) | 📖 [Postman API Docs](https://documenter.getpostman.com/view/bynd) | 🖥️ [Backend API](https://bynd-backend.onrender.com) | 🎥 [Video Walkthrough](https://youtube.com/watch?v=bynd-demo)
+
 ![BYND Official Logo](frontend/src/assets/logo_official.svg)
 
 **BYND** (Go Beyond Manual Data Entry) is the industry-leading, no-code bidirectional sync engine designed for the modern enterprise. We connect Excel, CRM, and Invoicing ecosystems with cryptographic precision, enabling global SMBs to reclaim their time and ensure 100% data parity.
@@ -199,10 +201,10 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 │            │                       │                                           │
 └────────────┼───────────────────────┼───────────────────────────────────────────┘
              │                       │
-             │  HTTPS               │
+             │  HTTPS                │
              ▼                       ▼
 ┌────────────────────────────────────────────────────────────────────────────────┐
-│                              BYND Backend (External)                            │
+│                              BYND Backend (API)                                │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
 │  │   Auth API   │  │  Sync Engine │  │  AI/ML Core  │  │  Webhooks    │        │
 │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘        │
@@ -211,136 +213,81 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 └────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Frontend Architecture Layers
+---
 
+## Folder Structure
+
+### Backend (MVC Pattern)
 ```
-┌─────────────────────────────────────────┐
-│           Pages / Routes                │  ← Route-level components
-├─────────────────────────────────────────┤
-│         Shared Components              │  ← Reusable UI (Cards, Modals)
-├─────────────────────────────────────────┤
-│          Layout Components             │  ← Navbar, Sidebar, Footer
-├─────────────────────────────────────────┤
-│           UI Primitives                │  ← shadcn/ui base components
-├─────────────────────────────────────────┤
-│             Services                    │  ← API calls, business logic
-├─────────────────────────────────────────┤
-│             State                       │  ← Redux slices, local state
-├─────────────────────────────────────────┤
-│           Utilities                     │  ← Helpers, formatters
-└─────────────────────────────────────────┘
+backend/
+├── src/
+│   ├── config/          # DB connection & environment config
+│   ├── controllers/     # Business logic & request handling
+│   ├── middleware/      # Auth & Error handling middleware
+│   ├── models/          # Mongoose schemas (User, Sync, etc.)
+│   ├── routes/          # API route definitions
+│   ├── utils/           # Validation schemas & helper functions
+│   └── server.js        # Entry point
+├── .env                 # Environment variables
+└── package.json         # Backend dependencies
 ```
+
+### Frontend
+```
+frontend/
+├── public/              # Static assets (robots.txt, sitemap.xml)
+├── src/
+│   ├── assets/          # Images, logos, animations
+│   ├── components/      # UI components (Navbar, Footer, SEO)
+│   ├── hooks/           # Custom React hooks
+│   ├── pages/           # Route-level components (Landing, Auth, Pricing)
+│   ├── services/        # API communication logic
+│   ├── store/           # Redux state management
+│   ├── theme/           # UI theme configurations
+│   ├── utils/           # Helper functions
+│   ├── App.jsx          # Main application component
+│   └── main.jsx         # Entry point
+```
+
+---
+
+## Project Screenshots
+
+### 1. Hero Interface
+![Hero Section](https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200)
+
+### 2. Node Authorization (Auth)
+![Auth Interface](https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1200)
+
+### 3. Enterprise Pricing Matrix
+![Pricing Interface](https://images.unsplash.com/photo-1551288049-bbbda5366a71?auto=format&fit=crop&q=80&w=1200)
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-
 - Node.js 18+
 - npm 9+
-- Git
+- MongoDB (Local or Atlas)
 
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-VITE_API_BASE_URL=https://api.bynd.io/v1
-VITE_GOOGLE_CLIENT_ID=your_google_client_id
-VITE_HUBSPOT_CLIENT_ID=your_hubspot_client_id
-VITE_SPLINE_SCENE_URL=https://prod.spline.design/your-scene
+### 1. Backend Setup
+```bash
+cd backend
+npm install
+# Create .env with MONGO_URI, JWT_SECRET, PORT
+npm run dev
 ```
 
-### Installation
-
+### 2. Frontend Setup
 ```bash
-# Clone the repository
-git clone https://github.com/bynd/bynd-frontend.git
-cd bynd-frontend
-
-# Install dependencies
+cd frontend
 npm install
-
-# Start development server
+# Create .env with VITE_API_BASE_URL
 npm run dev
 ```
 
 The app will be available at `http://localhost:5173`
-
-### Build for Production
-
-```bash
-npm run build
-npm run preview
-```
-
----
-
-## Folder Structure
-
-```
-src/
-├── assets/              # Static assets, Lottie animations, images
-├── components/
-│   ├── layout/          # App layout components
-│   │   ├── Navbar.jsx       # Public navigation
-│   │   ├── AppSidebar.jsx   # Dashboard sidebar
-│   │   ├── AppTopBar.jsx    # Top bar with user info
-│   │   └── Footer.jsx      # Public footer
-│   ├── shared/          # Reusable business components
-│   │   ├── KpiCard.jsx         # Dashboard KPI cards
-│   │   ├── ConflictCard.jsx    # Conflict resolution card
-│   │   ├── EntityMatchCard.jsx # Entity matching card
-│   │   ├── EmptyState.jsx      # Empty state placeholder
-│   │   └── Loader.jsx          # Loading spinner
-│   └── ui/              # shadcn/ui component overrides
-│       ├── Button.jsx
-│       ├── Input.jsx
-│       ├── Dialog.jsx
-│       ├── Table.jsx
-│       ├── Tabs.jsx
-│       ├── Select.jsx
-│       └── Badge.jsx
-├── hooks/               # Custom React hooks
-│   ├── useAuth.js           # Authentication hook
-│   ├── useDebounce.js       # Debounce utility
-│   ├── useTheme.js          # Theme management
-│   ├── useFetch.js          # Data fetching
-│   └── useToggle.js         # Toggle state
-├── pages/               # Route-level page components
-│   ├── Landing.jsx          # Marketing landing page
-│   ├── Pricing.jsx          # Pricing page
-│   ├── Auth.jsx             # Authentication (login/signup)
-│   ├── ForgotPassword.jsx   # Password reset
-│   ├── NotFound.jsx         # 404 page
-│   ├── Onboarding/          # Onboarding wizard
-│   │   ├── ConnectStep.jsx      # Step 1: Connect sources
-│   │   ├── MapStep.jsx          # Step 2: Field mapping
-│   │   └── SyncStep.jsx         # Step 3: Sync direction
-│   ├── Dashboard.jsx        # Main dashboard
-│   ├── SyncContracts.jsx    # Sync contract management
-│   ├── ConflictQueue.jsx    # Conflict resolution
-│   ├── PendingEntities.jsx  # Pending entity matches
-│   ├── JobHistory.jsx       # Sync job history/logs
-│   └── Settings.jsx         # Workspace settings
-├── routes/               # Routing configuration
-│   ├── AppRouter.jsx        # Main router with lazy loading
-│   └── ProtectedRoute.jsx   # Auth guard component
-├── services/             # API and business services
-│   ├── api.js              # Axios instance with interceptors
-│   ├── authService.js      # Authentication API calls
-│   └── syncService.js      # Sync operations API
-├── store/                # Redux store configuration
-│   ├── index.js            # Store setup
-│   ├── authSlice.js        # Auth state management
-│   └── uiSlice.js          # UI state management
-├── utils/                # Utility functions
-│   ├── storage.js          # localStorage helpers
-│   └── formatters.js       # Date, currency formatters
-├── App.jsx               # Root component
-└── main.jsx              # Entry point
-```
 
 ---
 
