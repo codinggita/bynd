@@ -33,11 +33,21 @@ import { useTheme } from './hooks/useTheme';
 import { useAnalytics } from './hooks/useAnalytics';
 
 import DashboardLayout from './components/DashboardLayout';
+import { useAuth } from './hooks/useAuth';
+import { useEffect } from 'react';
 
 function App() {
   const { themeMode } = useTheme();
   const theme = getTheme(themeMode);
+  const { fetchProfile, token, user } = useAuth();
+  
   useAnalytics(); // Initialize global tracking
+
+  useEffect(() => {
+    if (token && !user) {
+      fetchProfile();
+    }
+  }, [token, user]);
 
   return (
     <ThemeProvider theme={theme}>
