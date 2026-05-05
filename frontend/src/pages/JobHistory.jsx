@@ -24,33 +24,57 @@ import Logo from '../components/Logo';
 import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 
+import { getSyncJobs } from '../services/api';
+
 const JobHistory = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [filter, setFilter] = useState(sessionStorage.getItem('jobFilter') || 'All');
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 1
+  });
+
+  const fetchJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await getSyncJobs(pagination.page, pagination.limit, search, filter);
+      setJobs(res.data.data);
+      setPagination(prev => ({
+        ...prev,
+        total: res.data.total,
+        pages: res.data.pages
+      }));
+    } catch (err) {
+      toast.error('Failed to synchronize with audit ledger');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchJobs();
+    }, 300); // Debounce search
+    return () => clearTimeout(timer);
+  }, [pagination.page, filter, search]);
 
   const handleFilterChange = (f) => {
     setFilter(f);
+    setPagination(prev => ({ ...prev, page: 1 }));
     sessionStorage.setItem('jobFilter', f);
   };
 
   const stats = [
-    { label: 'TOTAL EXECUTIONS', value: '14,202', icon: <History size={18} />, color: '#12E7FF' },
+    { label: 'TOTAL EXECUTIONS', value: pagination.total.toLocaleString(), icon: <History size={18} />, color: '#12E7FF' },
     { label: 'SUCCESS RATE', value: '99.8%', icon: <CheckCircle2 size={18} />, color: '#10B981' },
     { label: 'AVG DURATION', value: '1.2s', icon: <Clock size={18} />, color: '#FACC15' },
     { label: 'DATA THROUGHPUT', value: '4.2 TB', icon: <Activity size={18} />, color: '#12E7FF' },
   ];
-
-  const jobs = [
-    { id: 'JOB-9921', name: 'CRM-ERP Sync Master', status: 'Success', records: '12,000', duration: '840ms', timestamp: '2024-04-29 16:20', source: 'Salesforce', target: 'SAP S/4HANA' },
-    { id: 'JOB-9920', name: 'Inventory Update', status: 'Partial', records: '4,500', duration: '1.2s', timestamp: '2024-04-29 16:15', source: 'Shopify Node', target: 'Internal DB' },
-    { id: 'JOB-9919', name: 'Global Tax Refresh', status: 'Failed', records: '0', duration: '4.5s', timestamp: '2024-04-29 16:10', source: 'External API', target: 'Cloud Storage' },
-    { id: 'JOB-9918', name: 'Customer Batch 04', status: 'Success', records: '890', duration: '120ms', timestamp: '2024-04-29 16:05', source: 'Excel Node', target: 'Salesforce' },
-    { id: 'JOB-9917', name: 'Legacy Data Migration', status: 'Success', records: '1.2M', duration: '45m', timestamp: '2024-04-29 15:30', source: 'On-Prem DB', target: 'Azure Cloud' },
-  ];
-
-  const filteredJobs = filter === 'All' 
-    ? jobs 
-    : jobs.filter(j => j.status === filter);
 
   const handleReRun = (id) => {
     toast.success(`Job ${id} re-initialized in background protocol.`, {
@@ -60,7 +84,7 @@ const JobHistory = () => {
 
   const handleExport = () => {
     const csv = ['Job ID,Name,Status,Records,Duration,Timestamp,Source,Target',
-      ...jobs.map(j => `${j.id},${j.name},${j.status},${j.records},${j.duration},${j.timestamp},${j.source},${j.target}`)
+      ...jobs.map(j => `${j._id},${j.name},${j.status},${j.records},${j.duration},${j.timestamp},${j.source},${j.target}`)
     ].join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -90,6 +114,11 @@ const JobHistory = () => {
             <input 
               type="text" 
               placeholder="SEARCH NODE / JOB ID..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPagination(prev => ({ ...prev, page: 1 }));
+              }}
               className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-[10px] font-bold uppercase tracking-widest text-white focus:outline-none focus:border-[#12E7FF]/50 transition-all"
             />
           </div>
@@ -165,8 +194,23 @@ const JobHistory = () => {
                       <th className="text-right py-6 pr-4">Actions</th>
                    </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
-                   {filteredJobs.map((job, i) => (
+                <tbody className="divide-y divide-white/5 relative">
+                   {loading ? (
+                     <tr>
+                       <td colSpan="6" className="py-20 text-center">
+                          <div className="w-10 h-10 border-4 border-[#12E7FF]/20 border-t-[#12E7FF] rounded-full animate-spin mx-auto mb-4" />
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Accessing Audit Ledger...</p>
+                       </td>
+                     </tr>
+                   ) : jobs.length === 0 ? (
+                     <tr>
+                       <td colSpan="6" className="py-20 text-center">
+                          <AlertCircle size={40} className="text-gray-700 mx-auto mb-4" />
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">No Historical Records Found</p>
+                       </td>
+                     </tr>
+                   ) : (
+                     jobs.map((job, i) => (
                      <motion.tr 
                        key={job.id}
                        initial={{ opacity: 0, x: -10 }}
@@ -177,7 +221,7 @@ const JobHistory = () => {
                         <td className="py-6 pl-4">
                            <div className="flex flex-col">
                               <span className="text-xs font-bold text-gray-300 group-hover:text-[#12E7FF] transition-colors">{job.name}</span>
-                              <span className="text-[9px] font-black font-mono text-gray-600 uppercase tracking-widest">{job.id}</span>
+                              <span className="text-[9px] font-black font-mono text-gray-600 uppercase tracking-widest">{job._id}</span>
                            </div>
                         </td>
                         <td className="py-6">
@@ -215,7 +259,8 @@ const JobHistory = () => {
                            </div>
                         </td>
                      </motion.tr>
-                   ))}
+                     ))
+                   )}
                 </tbody>
               </table>
            </div>
@@ -223,11 +268,25 @@ const JobHistory = () => {
            {/* Table Footer / Info */}
            <div className="p-6 border-t border-white/5 bg-white/[0.01] flex justify-between items-center">
               <div className="flex items-center gap-4">
-                 <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Showing {filteredJobs.length} of {jobs.length} Historical Logs</p>
+                 <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest italic">
+                    Showing {jobs.length} of {pagination.total} Historical Logs • Page {pagination.page} of {pagination.pages}
+                 </p>
               </div>
               <div className="flex gap-2">
-                 <button className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all text-gray-500">Previous</button>
-                 <button className="px-6 py-2 bg-[#12E7FF] text-[#030712] rounded-xl text-[10px] font-black uppercase tracking-widest hover:shadow-[0_0_20px_#12E7FF] transition-all">Next</button>
+                 <button 
+                    disabled={pagination.page === 1 || loading}
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                    className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all text-gray-500 disabled:opacity-20"
+                  >
+                    Previous
+                  </button>
+                  <button 
+                    disabled={pagination.page === pagination.pages || loading}
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                    className="px-6 py-2 bg-[#12E7FF] text-[#030712] rounded-xl text-[10px] font-black uppercase tracking-widest hover:shadow-[0_0_20px_#12E7FF] transition-all disabled:opacity-20"
+                  >
+                    Next
+                  </button>
               </div>
            </div>
         </div>
