@@ -20,7 +20,7 @@ const initializeServer = async () => {
     app.use(helmet()); 
     app.use(cors({
       origin: process.env.NODE_ENV === 'production' 
-        ? ['https://bynd-sync.vercel.app', 'https://bynd-sync.com'] 
+        ? ['https://bynd-sync.vercel.app', 'https://bynd-sync.com', 'http://localhost:5173', 'http://localhost:5174'] 
         : '*', 
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization']
