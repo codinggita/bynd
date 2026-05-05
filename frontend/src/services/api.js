@@ -34,4 +34,11 @@ export const getProfile = () => API.get('/auth/me');
 export const updateProfile = (data) => API.put('/auth/update-profile', data);
 export const forgotPassword = (data) => API.post('/auth/forgot-password', data);
 
+// Sync Ledger & Contract Endpoints
+export const getSyncJobs = (page = 1, limit = 10, search = '', status = 'All') => 
+  API.get(`/sync/jobs?page=${page}&limit=${limit}&search=${search}&status=${status}`);
+export const createSyncJob = (data) => API.post('/sync/jobs', data);
+export const getSyncContracts = () => API.get('/sync/contracts');
+export const createSyncContract = (data) => API.post('/sync/contracts', data);
+
 export default API;

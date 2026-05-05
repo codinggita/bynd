@@ -59,45 +59,57 @@ const defaultContracts = [
   }
 ];
 
+import { getSyncContracts, createSyncContract } from '../services/api';
+
 const SyncContracts = () => {
   const [hoveredContract, setHoveredContract] = useState(null);
   const [signing, setSigning] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [contracts, setContracts] = useState([]);
 
-  const [contracts, setContracts] = useState(() => {
-    const saved = localStorage.getItem('syncContracts');
-    return saved ? JSON.parse(saved) : defaultContracts;
-  });
+  const fetchContracts = async () => {
+    setLoading(true);
+    try {
+      const res = await getSyncContracts();
+      setContracts(res.data.data);
+    } catch (err) {
+      toast.error('Failed to retrieve protocol ledger');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem('syncContracts', JSON.stringify(contracts));
-  }, [contracts]);
+    fetchContracts();
+  }, []);
 
-  const handleSignContract = () => {
+  const handleSignContract = async () => {
     setSigning(true);
-    setTimeout(() => {
+    try {
       const newContract = {
-        id: `BYND-LDR-${String(contracts.length + 1).padStart(3, '0')}`,
-        name: `New Protocol #${contracts.length + 1}`,
-        governance: 'Self-Sovereign',
-        nodeA: 'Custom-Node-A',
-        nodeB: 'BYND-Core-New',
-        parityScore: Math.floor(Math.random() * 15 + 85),
-        security: 'AES-256-GCM',
-        quota: '1 TB / Month',
-        status: 'Signed',
-        risk: 'None'
+        name: `Sovereign Protocol #${contracts.length + 1}`,
+        sourceNode: 'Edge-Nexus-01',
+        targetNode: 'BYND-Core-Primary',
+        status: 'Active',
+        frequency: 'Real-time'
       };
-      setContracts(prev => [...prev, newContract]);
-      setSigning(false);
+      
+      const res = await createSyncContract(newContract);
+      setContracts(prev => [res.data.data, ...prev]);
+      
       toast.success('Protocol Signature Verified: Atomic Handshake Established', {
         icon: '🛡️',
         style: { borderRadius: '20px', background: '#030712', color: '#fff', border: '1px solid rgba(18,231,255,0.2)' }
       });
-    }, 2000);
+    } catch (err) {
+      toast.error('Identity Verification Failed: Protocol Rejected');
+    } finally {
+      setSigning(false);
+    }
   };
 
   const handleDeleteContract = (id) => {
-    setContracts(prev => prev.filter(c => c.id !== id));
+    setContracts(prev => prev.filter(c => c._id !== id));
     toast.success('Protocol terminated and purged from ledger');
   };
 
@@ -139,10 +151,23 @@ const SyncContracts = () => {
 
       {/* Main Ledger Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        <AnimatePresence>
-          {contracts.map((contract, i) => (
-            <motion.div
-              key={contract.id}
+        {loading ? (
+          <div className="col-span-full py-40 text-center">
+            <div className="w-12 h-12 border-4 border-[#12E7FF]/20 border-t-[#12E7FF] rounded-full animate-spin mx-auto mb-6" />
+            <p className="text-xs font-black uppercase tracking-[0.4em] text-gray-500">Decrypting Sync Ledger...</p>
+          </div>
+        ) : contracts.length === 0 ? (
+          <div className="col-span-full py-40 text-center">
+             <div className="bg-white/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FileSignature size={32} className="text-gray-700" />
+             </div>
+             <p className="text-xs font-black uppercase tracking-[0.4em] text-gray-500">No Active Sync Protocols Found</p>
+          </div>
+        ) : (
+          <AnimatePresence>
+            {contracts.map((contract, i) => (
+              <motion.div
+                key={contract._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -162,7 +187,7 @@ const SyncContracts = () => {
                    <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${contract.status === 'Signed' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-amber-500/10 border-amber-500/20 text-amber-400'}`}>
                       {contract.status}
                    </span>
-                   <span className="text-[10px] font-black text-gray-600 mt-1 uppercase tracking-widest">{contract.id}</span>
+                   <span className="text-[10px] font-black text-gray-600 mt-1 uppercase tracking-widest">{contract._id?.slice(-8).toUpperCase()}</span>
                 </div>
               </div>
 
@@ -171,22 +196,22 @@ const SyncContracts = () => {
 
               <div className="space-y-6 flex-1 mb-10">
                 <div className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl">
-                   <div className="text-center flex-1">
-                      <p className="text-[8px] text-gray-600 font-black uppercase mb-1">Source Node</p>
-                      <p className="text-[10px] font-black text-white">{contract.nodeA}</p>
-                   </div>
-                   <ArrowRightLeft size={14} className="text-gray-700" />
-                   <div className="text-center flex-1">
-                      <p className="text-[8px] text-gray-600 font-black uppercase mb-1">Target Node</p>
-                      <p className="text-[10px] font-black text-white">{contract.nodeB}</p>
-                   </div>
+                    <div className="text-center flex-1">
+                       <p className="text-[8px] text-gray-600 font-black uppercase mb-1">Source Node</p>
+                       <p className="text-[10px] font-black text-white">{contract.sourceNode}</p>
+                    </div>
+                    <ArrowRightLeft size={14} className="text-gray-700" />
+                    <div className="text-center flex-1">
+                       <p className="text-[8px] text-gray-600 font-black uppercase mb-1">Target Node</p>
+                       <p className="text-[10px] font-black text-white">{contract.targetNode}</p>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                   <div className="p-4 bg-white/5 border border-white/5 rounded-2xl">
-                      <p className="text-[8px] text-gray-600 font-black uppercase mb-1">Parity</p>
-                      <p className="text-sm font-black text-white">{contract.parityScore}%</p>
-                   </div>
+                    <div className="p-4 bg-white/5 border border-white/5 rounded-2xl">
+                       <p className="text-[8px] text-gray-600 font-black uppercase mb-1">Parity</p>
+                       <p className="text-sm font-black text-white">{contract.parityScore || 99.8}%</p>
+                    </div>
                    <div className="p-4 bg-white/5 border border-white/5 rounded-2xl">
                       <p className="text-[8px] text-gray-600 font-black uppercase mb-1">Security</p>
                       <p className="text-xs font-black text-white truncate max-w-[80px]">AES-256</p>
@@ -202,16 +227,17 @@ const SyncContracts = () => {
                   <Download size={14} />
                   <span className="text-[9px] font-black uppercase tracking-widest">Export</span>
                 </button>
-                <button 
-                  onClick={() => handleDeleteContract(contract.id)}
-                  className="p-3 bg-red-500/10 border border-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-all"
-                >
-                  <Trash2 size={14} />
-                </button>
+                 <button 
+                   onClick={() => handleDeleteContract(contract._id)}
+                   className="p-3 bg-red-500/10 border border-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-all"
+                 >
+                   <Trash2 size={14} />
+                 </button>
               </div>
             </motion.div>
-          ))}
-        </AnimatePresence>
+            ))}
+          </AnimatePresence>
+        )}
       </div>
 
       <style>{`
