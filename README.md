@@ -1,6 +1,6 @@
 # BYND (Sovereign Data Sync Engine)
 
-### 🚀 [Live Demo](https://bynd-sync.vercel.app) | 🎨 [Figma Design](https://www.figma.com/file/bynd-design) | 📖 [Postman API Docs](https://documenter.getpostman.com/view/bynd) | 🖥️ [Backend API](https://bynd-backend.onrender.com) | 🎥 [Video Walkthrough](https://youtube.com/watch?v=bynd-demo)
+### 🚀 [Live Demo](https://bynd-omega.vercel.app) | 📖 [Postman API Docs](https://documenter.getpostman.com/view/50841514/2sBXqMGyrZ) | 🖥️ [Backend API](https://bynd-k3w4.onrender.com) | 🎨 [Figma Design](#)
 
 ![BYND Official Logo](frontend/src/assets/logo_official.svg)
 
