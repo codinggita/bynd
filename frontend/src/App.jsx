@@ -17,6 +17,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ConflictQueue = lazy(() => import('./pages/ConflictQueue'));
 const PendingEntities = lazy(() => import('./pages/PendingEntities'));
 const SyncContracts = lazy(() => import('./pages/SyncContracts'));
+const FieldMapping = lazy(() => import('./pages/FieldMapping'));
 const JobHistory = lazy(() => import('./pages/JobHistory'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Logout = lazy(() => import('./pages/Logout'));
@@ -81,8 +82,9 @@ function App() {
             <Route path="/conflicts" element={<ConflictQueue />} />
             <Route path="/pending" element={<PendingEntities />} />
             <Route path="/contracts" element={<SyncContracts />} />
-            <Route path="/history" element={<ProtectedRoute allowedRoles={['admin']}><JobHistory /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute allowedRoles={['admin']}><Settings /></ProtectedRoute>} />
+            <Route path="/mapping" element={<ProtectedRoute><FieldMapping /></ProtectedRoute>} />
+            <Route path="/history" element={<ProtectedRoute><JobHistory /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           </Route>
           
           {/* SEO & Legal Routes */}

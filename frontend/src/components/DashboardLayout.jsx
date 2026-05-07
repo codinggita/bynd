@@ -16,7 +16,8 @@ import {
   Clock, 
   Bell, 
   HelpCircle, 
-  Plus 
+  Plus,
+  ArrowRightLeft
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useAnalytics } from '../hooks/useAnalytics';
@@ -56,9 +57,10 @@ const DashboardLayout = () => {
           
           {[
             { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+            { id: 'contracts', label: 'Contracts', icon: FileSignature, path: '/contracts' },
+            { id: 'mapping', label: 'Field Mapping', icon: ArrowRightLeft, path: '/mapping' },
             { id: 'conflicts', label: 'Conflicts', icon: AlertTriangle, path: '/conflicts' },
             { id: 'pending', label: 'Pending', icon: Layers, path: '/pending' },
-            { id: 'contracts', label: 'Contracts', icon: FileSignature, path: '/contracts' },
             { id: 'history', label: 'Job History', icon: History, path: '/history' },
           ].map((item) => (
             <Link 
