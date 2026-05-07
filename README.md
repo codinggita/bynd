@@ -1,12 +1,15 @@
+<div align="center">
+  <img src="frontend/src/assets/logo_official.svg" alt="BYND Official Logo" width="250"/>
+</div>
+
 # BYND (Sovereign Data Sync Engine)
 
 ## 📌 Mandatory Evaluation Links
-- **Live Deployed Project:** [https://bynd-omega.vercel.app](https://bynd-omega.vercel.app)
-- **Backend Deployed Link:** [https://bynd-k3w4.onrender.com](https://bynd-k3w4.onrender.com)
-- **Postman Documentation:** [View API Docs](https://documenter.getpostman.com/view/50841514/2sBXqMGyrZ)
-- **Figma Design Link:** [Add Figma Link Here](#) *(Pending)*
-- **YouTube Demo Video:** [Add YouTube Link Here](#) *(Pending)*
-![BYND Official Logo](frontend/src/assets/logo_official.svg)
+- [**Live Deployed Project**](https://bynd-omega.vercel.app)
+- [**Backend API**](https://bynd-k3w4.onrender.com)
+- [**Postman Documentation**](https://documenter.getpostman.com/view/50841514/2sBXqMGyrZ)
+- [**Figma Design**](https://www.figma.com/file/bynd-design)
+- [**YouTube Demo Video**](#) *(Pending)*
 
 **BYND** (Go Beyond Manual Data Entry) is the industry-leading, no-code bidirectional sync engine designed for the modern enterprise. We connect Excel, CRM, and Invoicing ecosystems with cryptographic precision, enabling global SMBs to reclaim their time and ensure 100% data parity.
 
@@ -24,25 +27,13 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 
 ### The Old Way: A Day in the Life
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  8:00 AM  │  Export Excel sheet with 247 rows                   │
-│           │  Open HubSpot → Create 247 contacts manually        │
-│           │  Realize 12 emails were wrong → Fix each one         │
-│           │                                                        │
-│  11:30 AM │  Export updated HubSpot contacts to Excel            │
-│           │  Cross-reference with Xero for invoice data           │
-│           │  Realize 3 records conflict → Start investigating    │
-│           │                                                        │
-│  2:00 PM  │  Update Xero invoices based on HubSpot changes      │
-│           │  QA everything because one mistake costs $400         │
-│           │                                                        │
-│  4:30 PM  │  Export Xero status changes back to Excel            │
-│           │  Share updated sheet with team                       │
-│           │                                                        │
-│  TOTAL:   │  8.5 hours of data entry. Zero time on actual work.   │
-└─────────────────────────────────────────────────────────────────┘
-```
+| Time | Action | Result / Bottleneck |
+| :--- | :--- | :--- |
+| **8:00 AM** | Export Excel sheet & manually create 247 contacts in HubSpot | High manual effort, error-prone (12 incorrect emails found) |
+| **11:30 AM** | Export updated contacts to Excel, cross-reference with Xero | Data fragmentation, conflicts found requiring investigation |
+| **2:00 PM** | Update Xero invoices manually based on HubSpot changes | Heavy QA required; high financial risk for simple mistakes |
+| **4:30 PM** | Export Xero status back to Excel & share with team | Delayed visibility, version control issues |
+| **TOTAL** | **8.5 Hours of Data Entry** | **Zero time spent on actual productive work** |
 
 ---
 
@@ -59,26 +50,14 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 
 ### The New Way: BYND Sync
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  8:00 AM  │  Click "New Sync" → Select Excel & HubSpot          │
-│           │  BYND AI suggests field mappings → Click "Approve"    │
-│           │                                                        │
-│  8:15 AM  │  First sync runs automatically                       │
-│           │  247 contacts created in HubSpot                      │
-│           │  12 conflicts flagged → Review in 2 minutes           │
-│           │                                                        │
-│  8:30 AM  │  All systems in sync. Go to meetings.                │
-│           │                                                        │
-│  12:00 PM │  Sales updates 8 records in Excel                    │
-│           │  BYND syncs automatically in background               │
-│           │                                                        │
-│  4:30 PM  │  Weekly report: 1,847 records synced                 │
-│           │  Zero errors. Full audit trail.                      │
-│           │                                                        │
-│  TOTAL:   │  30 minutes of setup. 4 hours of work reclaimed.      │
-└─────────────────────────────────────────────────────────────────┘
-```
+| Time | Action | Result / Benefit |
+| :--- | :--- | :--- |
+| **8:00 AM** | Click "New Sync", select tools, approve AI field mapping | Setup completed in under 5 minutes with zero code |
+| **8:15 AM** | First sync runs automatically (247 contacts created) | System flags 12 conflicts; resolved via UI in 2 minutes |
+| **8:30 AM** | All systems in perfect parity | Team focuses on core work and meetings |
+| **12:00 PM** | Sales team updates 8 records in Excel | BYND syncs changes instantly in the background |
+| **4:30 PM** | Weekly report generated (1,847 records synced) | **100% accuracy, zero errors, full audit trail** |
+| **TOTAL** | **30 Minutes Setup** | **4+ hours of productive work reclaimed daily** |
 
 ---
 
