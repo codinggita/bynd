@@ -237,16 +237,16 @@ frontend/
 ## Project Screenshots
 
 ### 1. Sovereign Node Dashboard (Hero)
-*(Drag and drop hero.png from your Desktop here on GitHub.com)*
+*<img width="1536" height="695" alt="hero" src="https://github.com/user-attachments/assets/6bdee730-3ad3-403c-b973-773fa014173d" />*
 
 ### 2. Secure Node Authentication
-*(Drag and drop auth.png from your Desktop here on GitHub.com)*
+*<img width="1536" height="695" alt="auth" src="https://github.com/user-attachments/assets/f111172c-b28d-40bc-ba10-6513684a4ec2" />*
 
 ### 3. Active Sync Protocols
-*(Drag and drop contracts.png from your Desktop here on GitHub.com)*
+*<img width="1536" height="695" alt="contracts" src="https://github.com/user-attachments/assets/ca8b0ac6-c48a-47d0-a1f1-d4440f6d5c0e" />*
 
 ### 4. Historical Sync Ledger
-*(Drag and drop ledger.png from your Desktop here on GitHub.com)*
+*<img width="1536" height="695" alt="ledger" src="https://github.com/user-attachments/assets/3c1cc871-b9d3-4635-b787-f7c79d6c396c" />*
 
 
 ---
