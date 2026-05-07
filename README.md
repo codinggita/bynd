@@ -342,7 +342,7 @@ Copyright © 2024 BYND Technologies. All rights reserved.
 
 ## Developer & Feedback
 
-Engineered with ❤️ by **Raushan Kumar**
+Engineered by **Raushan Kumar**
 
 <a href="https://www.linkedin.com/in/raushan150720/">
   <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
