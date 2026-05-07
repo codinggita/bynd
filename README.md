@@ -340,13 +340,11 @@ Copyright © 2024 BYND Technologies. All rights reserved.
 
 ---
 
-## Support
+## Developer Contact
 
-> **Guide for Original Links:** To make this section 100% authentic, please replace the placeholders below with your actual project resources once they are ready.
-
-- **Documentation**: [Create a free GitBook, Notion, or Docusaurus page and link it here]
-- **Email**: [Use your professional email, e.g., hello@yourdomain.com]
-- **System Status**: [Set up a free status page using UptimeRobot or Atlassian Statuspage and link it here]
+For any queries regarding this project, feel free to reach out:
+- **GitHub**: [@Raushankumar0720](https://github.com/Raushankumar0720)
+- **Project Repository**: [BYND Source Code](https://github.com/Raushankumar0720/bynd)
 
 ---
 
