@@ -1,7 +1,11 @@
 # BYND (Sovereign Data Sync Engine)
 
-### 🚀 [Live Demo](https://bynd-omega.vercel.app) | 📖 [Postman API Docs](https://documenter.getpostman.com/view/50841514/2sBXqMGyrZ) | 🖥️ [Backend API](https://bynd-k3w4.onrender.com) | 🎨 [Figma Design](#)
-
+## 📌 Mandatory Evaluation Links
+- **Live Deployed Project:** [https://bynd-omega.vercel.app](https://bynd-omega.vercel.app)
+- **Backend Deployed Link:** [https://bynd-k3w4.onrender.com](https://bynd-k3w4.onrender.com)
+- **Postman Documentation:** [View API Docs](https://documenter.getpostman.com/view/50841514/2sBXqMGyrZ)
+- **Figma Design Link:** [Add Figma Link Here](#) *(Pending)*
+- **YouTube Demo Video:** [Add YouTube Link Here](#) *(Pending)*
 ![BYND Official Logo](frontend/src/assets/logo_official.svg)
 
 **BYND** (Go Beyond Manual Data Entry) is the industry-leading, no-code bidirectional sync engine designed for the modern enterprise. We connect Excel, CRM, and Invoicing ecosystems with cryptographic precision, enabling global SMBs to reclaim their time and ensure 100% data parity.
@@ -81,7 +85,7 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 ## Impact
 
 | Metric | Before BYND | After BYND |
-|--------|-------------|------------|
+| :--- | :--- | :--- |
 | Weekly data entry time | 16 hours | 4 hours |
 | Data entry errors | 12-15 per week | 0 |
 | Time to reconcile conflicts | 3+ hours | 15 minutes |
@@ -134,14 +138,14 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 ### Frontend Technologies
 
 | Technology | Version | Purpose |
-|------------|---------|---------|
+| :--- | :--- | :--- |
 | **React** | 18.x | UI framework |
 | **Vite** | 5.x | Build tooling |
 | **Tailwind CSS** | 3.x | Styling |
 | **shadcn/ui** | latest | Component library |
 | **Redux Toolkit** | 2.x | State management |
 | **React Router** | 6.x | Routing |
-| **React Hook Form** | 7.x | Form handling |
+| **React Hook Form**| 7.x | Form handling |
 | **Axios** | 1.x | HTTP client |
 | **Framer Motion** | 11.x | Animations |
 | **Phosphor Icons** | latest | Icon set |
@@ -149,12 +153,12 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 | **React Flow** | 11.x | Flow diagrams |
 | **dnd-kit** | 6.x | Drag and drop |
 | **Spline** | 3.x | 3D graphics |
-| **Formik + Yup** | - | Form validation |
+| **Formik + Yup** | latest| Form validation |
 
 ### Integrations
 
 | Integration | Purpose |
-|-------------|---------|
+| :--- | :--- |
 | **Google OAuth** | Authentication |
 | **Google Sheets API** | Sheets connectivity |
 | **HubSpot API** | CRM sync |
@@ -253,14 +257,18 @@ frontend/
 
 ## Project Screenshots
 
-### 1. Hero Interface
-![Hero Section](https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200)
+### 1. Sovereign Node Dashboard (Hero)
+![Sovereign Dashboard](docs/screenshots/hero.png)
 
-### 2. Node Authorization (Auth)
-![Auth Interface](https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1200)
+### 2. Secure Node Authentication
+![Auth Interface](docs/screenshots/auth.png)
 
-### 3. Enterprise Pricing Matrix
-![Pricing Interface](https://images.unsplash.com/photo-1551288049-bbbda5366a71?auto=format&fit=crop&q=80&w=1200)
+### 3. Active Sync Protocols
+![Sync Contracts](docs/screenshots/contracts.png)
+
+### 4. Historical Sync Ledger
+![Job History](docs/screenshots/ledger.png)
+
 
 ---
 
@@ -296,7 +304,7 @@ The app will be available at `http://localhost:5173`
 ### Color Palette
 
 | Token | Hex | Usage |
-|-------|-----|-------|
+| :--- | :--- | :--- |
 | `color-bg-page` | `#F8FAFC` | Page background |
 | `color-surface` | `#FFFFFF` | Cards, modals |
 | `color-text-primary` | `#0F172A` | Headings |
