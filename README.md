@@ -340,11 +340,25 @@ Copyright © 2024 BYND Technologies. All rights reserved.
 
 ---
 
-## Developer Contact
+## Developer & Feedback
 
-For any queries regarding this project, feel free to reach out:
-- **GitHub**: [@Raushankumar0720](https://github.com/Raushankumar0720)
-- **Project Repository**: [BYND Source Code](https://github.com/Raushankumar0720/bynd)
+Engineered with ❤️ by **Raushan Kumar**
+
+<a href="https://www.linkedin.com/in/raushan150720/">
+  <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+</a>
+<a href="mailto:raushan.singh.cg@gmail.com">
+  <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+</a>
+<a href="https://github.com/Raushankumar0720">
+  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+</a>
+
+<br><br>
+
+### 🐛 Bug Reports & Feature Requests
+Found a bug in the demo or want to suggest a new feature? I'd love your input! 
+👉 **[Open an Issue on GitHub](https://github.com/Raushankumar0720/bynd/issues)**
 
 ---
 
