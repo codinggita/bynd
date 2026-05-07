@@ -237,16 +237,16 @@ frontend/
 ## Project Screenshots
 
 ### 1. Sovereign Node Dashboard (Hero)
-![Sovereign Dashboard](docs/screenshots/hero.png)
+*(Drag and drop hero.png from your Desktop here on GitHub.com)*
 
 ### 2. Secure Node Authentication
-![Auth Interface](docs/screenshots/auth.png)
+*(Drag and drop auth.png from your Desktop here on GitHub.com)*
 
 ### 3. Active Sync Protocols
-![Sync Contracts](docs/screenshots/contracts.png)
+*(Drag and drop contracts.png from your Desktop here on GitHub.com)*
 
 ### 4. Historical Sync Ledger
-![Job History](docs/screenshots/ledger.png)
+*(Drag and drop ledger.png from your Desktop here on GitHub.com)*
 
 
 ---
