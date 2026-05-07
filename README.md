@@ -8,7 +8,7 @@
 - [**Live Deployed Project**](https://bynd-omega.vercel.app)
 - [**Backend API**](https://bynd-k3w4.onrender.com)
 - [**Postman Documentation**](https://documenter.getpostman.com/view/50841514/2sBXqMGyrZ)
-- [**Figma Design**]([https://www.figma.com/file/bynd-design](https://www.figma.com/design/Nw5DxsHzT2Sw9KxEZtU3qe/BYND?node-id=0-1&t=euAgUlfg2EQy78I6-1))
+- [**Figma Design**](https://www.figma.com/design/Nw5DxsHzT2Sw9KxEZtU3qe/BYND?node-id=0-1&t=euAgUlfg2EQy78I6-1)
 - [**YouTube Demo Video**](#) *(Pending)*
 
 **BYND** (Go Beyond Manual Data Entry) is the industry-leading, no-code bidirectional sync engine designed for the modern enterprise. We connect Excel, CRM, and Invoicing ecosystems with cryptographic precision, enabling global SMBs to reclaim their time and ensure 100% data parity.
