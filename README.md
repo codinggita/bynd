@@ -150,50 +150,51 @@ Global SMBs lose **16+ hours per week** to manual data entry between disconnecte
 
 ## Architecture
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                              BYND Frontend                                    │
+│                                BYND Frontend                                 │
 ├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │                           Browser Client                                 │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │ │
-│  │  │   Landing    │  │     Auth     │  │   Onboard    │  │    App       │    │ │
-│  │  │    Page      │  │   Flow        │  │   Wizard      │  │   Shell      │    │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │ │
-│  │         │              │                │                 │           │ │
-│  │         └──────────────┴────────────────┴─────────────────┘           │ │
-│  │                                │                                         │ │
-│  │                    ┌───────────▼───────────┐                           │ │
-│  │                    │     React Router      │                           │ │
-│  │                    │   (Protected Routes)   │                           │ │
-│  │                    └───────────┬───────────┘                           │ │
-│  │                                │                                         │ │
-│  │         ┌─────────────────────┼─────────────────────┐                 │ │
-│  │         │                     │                     │                 │ │
-│  │  ┌──────▼──────┐      ┌────────▼────────┐     ┌──────▼──────┐         │ │
-│  │  │   Redux     │      │    Services     │     │   Shared    │         │ │
-│  │  │   Store     │◄────►│    (API.js)     │◄───►│  Components │         │ │
-│  │  └──────┬──────┘      └────────┬────────┘     └─────────────┘         │ │
-│  │         │                      │                                        │ │
-│  │         │              ┌────────▼────────┐                              │ │
-│  │         │              │     Axios       │                              │ │
-│  │         │              │   Interceptors  │                              │ │
-│  │         │              └────────┬────────┘                              │ │
-│  └─────────┼───────────────────────┼──────────────────────────────────────┘ │
-│            │                       │                                           │
-└────────────┼───────────────────────┼───────────────────────────────────────────┘
-             │                       │
-             │  HTTPS                │
-             ▼                       ▼
-┌────────────────────────────────────────────────────────────────────────────────┐
-│                              BYND Backend (API)                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│  │   Auth API   │  │  Sync Engine │  │  AI/ML Core  │  │  Webhooks    │        │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘        │
-│                                                                                │
-│  Integrations: HubSpot │ Salesforce │ QuickBooks │ Xero │ Google Sheets        │
-└────────────────────────────────────────────────────────────────────────────────┘
+│                                                                              │
+│  ┌────────────────────────────────────────────────────────────────────────┐  │
+│  │                           Browser Client                               │  │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐        │  │
+│  │  │  Landing   │  │    Auth    │  │  Onboard   │  │    App     │        │  │
+│  │  │    Page    │  │    Flow    │  │   Wizard   │  │   Shell    │        │  │
+│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘        │  │
+│  │         │               │               │               │              │  │
+│  │         └───────────────┴───────────────┴───────────────┘              │  │
+│  │                                 │                                      │  │
+│  │                     ┌───────────▼───────────┐                          │  │
+│  │                     │     React Router      │                          │  │
+│  │                     │  (Protected Routes)   │                          │  │
+│  │                     └───────────┬───────────┘                          │  │
+│  │                                 │                                      │  │
+│  │           ┌─────────────────────┼─────────────────────┐                │  │
+│  │           │                     │                     │                │  │
+│  │    ┌──────▼──────┐      ┌───────▼───────┐     ┌───────▼──────┐         │  │
+│  │    │    Redux    │      │   Services    │     │    Shared    │         │  │
+│  │    │    Store    │◄────►│   (API.js)    │◄───►│  Components  │         │  │
+│  │    └──────┬──────┘      └───────┬───────┘     └──────────────┘         │  │
+│  │           │                     │                                      │  │
+│  │           │             ┌───────▼───────┐                              │  │
+│  │           │             │     Axios     │                              │  │
+│  │           │             │ Interceptors  │                              │  │
+│  │           │             └───────┬───────┘                              │  │
+│  └───────────┼─────────────────────┼──────────────────────────────────────┘  │
+│              │                     │                                         │
+└──────────────┼─────────────────────┼─────────────────────────────────────────┘
+               │                     │
+               │        HTTPS        │
+               ▼                     ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              BYND Backend (API)                              │
+│                                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   Auth API   │  │ Sync Engine  │  │  AI/ML Core  │  │   Webhooks   │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘      │
+│                                                                              │
+│  Integrations: HubSpot | Salesforce | QuickBooks | Xero | Google Sheets      │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -339,11 +340,25 @@ Copyright © 2024 BYND Technologies. All rights reserved.
 
 ---
 
-## Support
+## Developer & Feedback
 
-- **Documentation**: https://docs.bynd.io
-- **Email**: support@bynd.io
-- **Status**: https://status.bynd.io
+Engineered by **Raushan Kumar**
+
+<a href="https://www.linkedin.com/in/raushan150720/">
+  <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+</a>
+<a href="mailto:raushan.singh.cg@gmail.com">
+  <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+</a>
+<a href="https://github.com/Raushankumar0720">
+  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+</a>
+
+<br><br>
+
+### 🐛 Bug Reports & Feature Requests
+Found a bug in the demo or want to suggest a new feature? I'd love your input! 
+👉 **[Open an Issue on GitHub](https://github.com/Raushankumar0720/bynd/issues)**
 
 ---
 
