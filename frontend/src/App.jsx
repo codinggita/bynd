@@ -81,8 +81,8 @@ function App() {
             <Route path="/conflicts" element={<ConflictQueue />} />
             <Route path="/pending" element={<PendingEntities />} />
             <Route path="/contracts" element={<SyncContracts />} />
-            <Route path="/history" element={<ProtectedRoute allowedRoles={['admin']}><JobHistory /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute allowedRoles={['admin']}><Settings /></ProtectedRoute>} />
+            <Route path="/history" element={<ProtectedRoute><JobHistory /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           </Route>
           
           {/* SEO & Legal Routes */}
